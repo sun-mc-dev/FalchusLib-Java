@@ -4,6 +4,7 @@ api-version: 1.13
 description: A simple library.
 main: com.falchus.lib.minecraft.spigot.FalchusLibMinecraftSpigot
 author: Falchus
+authors: [Kalibrier]
 website: lib-java.falchus.com
 
 load: startup
