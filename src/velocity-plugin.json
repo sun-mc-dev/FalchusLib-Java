@@ -3,7 +3,7 @@
   "name": "FalchusLib",
   "version": "${project.version}",
   "main": "com.falchus.lib.minecraft.velocity.FalchusLibMinecraftVelocity",
-  "authors": ["Falchus"],
+  "authors": ["Falchus", "Kalibrier"],
   "description": "A simple library.",
   "url": "https://lib-java.falchus.com"
 }
