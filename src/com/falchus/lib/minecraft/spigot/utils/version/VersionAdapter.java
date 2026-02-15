@@ -410,7 +410,10 @@ public class VersionAdapter implements IVersionAdapter {
     		if (title != null && !title.isEmpty()) {
     			Object component = chatComponentText.getConstructor(String.class).newInstance(title);
     			Object titlePacket = new VersionPacketBuilder(packageNms + "PacketPlayOutTitle")
-    					.withArgs(enumTitle$Action_TITLE(), component)
+    					.withArgs(
+    						enumTitle$Action_TITLE(),
+    						component
+    					)
     					.build();
     			sendPacket(player, titlePacket);
     		}
@@ -418,7 +421,10 @@ public class VersionAdapter implements IVersionAdapter {
     		if (subtitle != null && !subtitle.isEmpty()) {
     			Object component = chatComponentText.getConstructor(String.class).newInstance(subtitle);
     			Object subtitlePacket = new VersionPacketBuilder(packageNms + "PacketPlayOutTitle")
-    					.withArgs(enumTitle$Action_SUBTITLE(), component)
+    					.withArgs(
+    						enumTitle$Action_SUBTITLE(),
+    						component
+    					)
     					.build();
     			sendPacket(player, subtitlePacket);
     		}
@@ -437,7 +443,9 @@ public class VersionAdapter implements IVersionAdapter {
             Object footerComponent = chatComponentText.getConstructor(String.class).newInstance(footerText);
             
             Object packet = new VersionPacketBuilder(packageNms + "PacketPlayOutPlayerListHeaderFooter")
-            		.withArgs(headerComponent)
+            		.withArgs(
+            			headerComponent
+            		)
             		.build();
             
             ReflectionUtils.setField(packet, "b", footerComponent);
@@ -474,12 +482,18 @@ public class VersionAdapter implements IVersionAdapter {
             entity_setLocation.invoke(wither, location.getX(), location.getY(), location.getZ(), yaw, pitch);
             
             Object spawnPacket = new VersionPacketBuilder(packageNms + "PacketPlayOutSpawnEntityLiving")
-            		.withArgs(wither)
+            		.withArgs(
+            			wither
+            		)
             		.build();
             sendPacket(player, spawnPacket);
             
             Object metadataPacket = new VersionPacketBuilder(packageNms + "PacketPlayOutEntityMetadata")
-            		.withArgs(entity_getId().invoke(wither), entity_getDataWatcher().invoke(wither), true)
+            		.withArgs(
+            			entity_getId().invoke(wither),
+            			entity_getDataWatcher().invoke(wither),
+            			true
+            		)
             		.build();
             sendPacket(player, metadataPacket);
             
@@ -496,7 +510,9 @@ public class VersionAdapter implements IVersionAdapter {
     		if (wither != null) {
     			int id = (int) entity_getId().invoke(wither);
     			Object destroyPacket = new VersionPacketBuilder(packageNms + "PacketPlayOutEntityDestroy")
-    					.withArgs(new int[] { id })
+    					.withArgs(
+    						new int[] { id }
+    					)
     					.build();
     			sendPacket(player, destroyPacket);
     		}
@@ -510,7 +526,10 @@ public class VersionAdapter implements IVersionAdapter {
 		try {
 			Object chatMessage = VersionProvider.get().createChatComponentText(message);
 			Object packet = new VersionPacketBuilder(packageNms + "PacketPlayOutChat")
-					.withArgs(chatMessage, (byte) 2)
+					.withArgs(
+						chatMessage,
+						(byte) 2
+					)
 					.build();
 			PlayerUtils.sendPacket(player, packet);
 		} catch (Exception e) {
@@ -529,13 +548,21 @@ public class VersionAdapter implements IVersionAdapter {
 			);
 			
 	        Object createPacket = new VersionPacketBuilder(packetPlayOutScoreboardTeam())
-	        		.withArgs(team, players, 0)
+	        		.withArgs(
+	        			team,
+	        			players,
+	        			0
+	        		)
 	        		.build();
 	        ReflectionUtils.setField(createPacket, packetPlayOutScoreboardTeam_name(), player.getName());
 	        ReflectionUtils.setField(createPacket, packetPlayOutScoreboardTeam_displayName(), player.getName());
 	
 	        Object updatePacket = new VersionPacketBuilder(packetPlayOutScoreboardTeam())
-	        		.withArgs(team, players, 2)
+	        		.withArgs(
+	        			team,
+	        			players,
+	        			2
+	        		)
 	        		.build();
 	        ReflectionUtils.setField(updatePacket, packetPlayOutScoreboardTeam_name(), player.getName());
 	        ReflectionUtils.setField(updatePacket, packetPlayOutScoreboardTeam_displayName(), player.getName());
@@ -566,7 +593,11 @@ public class VersionAdapter implements IVersionAdapter {
 			);
 			
 	        Object removePacket = new VersionPacketBuilder(packetPlayOutScoreboardTeam())
-	        		.withArgs(team, players, 4)
+	        		.withArgs(
+	        			team,
+	        			players,
+	        			4
+	        		)
 	        		.build();
 	        ReflectionUtils.setField(removePacket, packetPlayOutScoreboardTeam_name(), player.getName());
 			
@@ -589,7 +620,10 @@ public class VersionAdapter implements IVersionAdapter {
     		Object packet = new VersionPacketBuilder(
     			packageNms + "PacketPlayOutGameStateChange",
     			packageNm + "network.protocol.game.ClientboundGameEventPacket"
-    		).withArgs(4, 0.0F).build();
+    		).withArgs(
+    			4,
+    			0.0F
+    		).build();
     		sendPacket(player, packet);
     	} catch (Exception e) {
             throw new RuntimeException(e);
@@ -739,7 +773,10 @@ public class VersionAdapter implements IVersionAdapter {
     		Object packet = new VersionPacketBuilder(
 				packageNms + "PacketPlayOutPlayerInfo",
 				packageNm + "network.protocol.game.ClientboundPlayerInfoUpdatePacket"
-			).withArgs(update, List.of(entityPlayer)).build();
+			).withArgs(
+				update,
+				List.of(entityPlayer)
+			).build();
     	    for (Player online : Bukkit.getOnlinePlayers()) {
     	        sendPacket(online, packet);
     	    }
@@ -755,7 +792,10 @@ public class VersionAdapter implements IVersionAdapter {
     		Object packet = new VersionPacketBuilder(
 				packageNms + "PacketPlayOutPlayerInfo",
 				packageNm + "network.protocol.game.ClientboundPlayerInfoUpdatePacket"
-			).withArgs(add, List.of(entityPlayer)).build();
+			).withArgs(
+				add,
+				List.of(entityPlayer)
+			).build();
             sendPacket(player, packet);
     	} catch (Exception e) {
             throw new RuntimeException(e);
@@ -767,7 +807,10 @@ public class VersionAdapter implements IVersionAdapter {
     	try {
     		Object remove = enumPlayerInfoAction_REMOVE_PLAYER();
     		Object packet = new VersionPacketBuilder(packageNms + "PacketPlayOutPlayerInfo")
-    				.withArgs(remove, List.of(entityPlayer))
+    				.withArgs(
+    					remove,
+    					List.of(entityPlayer)
+    				)
     				.build();
             sendPacket(player, packet);
     	} catch (Exception e) {
@@ -783,13 +826,17 @@ public class VersionAdapter implements IVersionAdapter {
     		Object spawn = new VersionPacketBuilder(
     			packageNms + "PacketPlayOutNamedEntitySpawn",
     			packageNm + "network.protocol.game.ClientboundAddPlayerPacket"
-    		).withArgs(entityPlayer).build();
+    		).withArgs(
+    			entityPlayer
+    		).build();
     		sendPacket(player, spawn);
     		
     		Object teleport = new VersionPacketBuilder(
     			packageNms + "PacketPlayOutEntityTeleport",
     			packageNm + "network.protocol.game.ClientboundPlayerPositionPacket"
-    		).withArgs(entityPlayer).build();
+    		).withArgs(
+    			entityPlayer
+    		).build();
     		sendPacket(player, teleport);
     		
     		Bukkit.getScheduler().runTask(FalchusLibMinecraftSpigot.getInstance(), () -> removeEntityPlayer(player, entityPlayer));
