@@ -72,8 +72,10 @@ public class VersionAdapter implements IVersionAdapter {
     Field entityPlayer_playerConnection;
     Class<?> playerConnection;
     Method playerConnection_sendPacket;
+    Class<?> scoreboardTeam;
     Class<?> scoreboard;
     Object scoreboardINST;
+    Class<?> packetPlayOutScoreboardTeam;
     Class<?> craftPlayer;
     Method craftPlayer_getHandle;
     Class<?> player$Spigot;
@@ -156,23 +158,20 @@ public class VersionAdapter implements IVersionAdapter {
     private Class<?> entityWither() {
     	return ReflectionUtils.getClass(packageNms + "EntityWither");
     }
-    private Class<?> scoreboardTeam() {
-    	return ReflectionUtils.getClass(packageNms + "ScoreboardTeam");
+    private Method scoreboardTeam_setDisplayName() {
+    	return ReflectionUtils.getDeclaredMethod(scoreboardTeam, "setDisplayName",
+    		String.class
+    	);
     }
-	private Class<?> packetPlayOutScoreboardTeam() {
-		return ReflectionUtils.getClass(packageNms + "PacketPlayOutScoreboardTeam");
-	}
-    private Field packetPlayOutScoreboardTeam_name() {
-    	return ReflectionUtils.getDeclaredField(packetPlayOutScoreboardTeam(), "a");
+    private Method scoreboardTeam_setPrefix() {
+    	return ReflectionUtils.getDeclaredMethod(scoreboardTeam, "setPrefix",
+    		String.class
+    	);
     }
-    private Field packetPlayOutScoreboardTeam_displayName() {
-    	return ReflectionUtils.getDeclaredField(packetPlayOutScoreboardTeam(), "b");
-    }
-    private Field packetPlayOutScoreboardTeam_prefix() {
-    	return ReflectionUtils.getDeclaredField(packetPlayOutScoreboardTeam(), "c");
-    }
-    private Field packetPlayOutScoreboardTeam_suffix() {
-    	return ReflectionUtils.getDeclaredField(packetPlayOutScoreboardTeam(), "d");
+    private Method scoreboardTeam_setSuffix() {
+    	return ReflectionUtils.getDeclaredMethod(scoreboardTeam, "setSuffix",
+    		String.class
+    	);
     }
     
 	public VersionAdapter() {
@@ -287,6 +286,10 @@ public class VersionAdapter implements IVersionAdapter {
             	"sendPacket",
             	"send"
             );
+            scoreboardTeam = ReflectionUtils.getFirstClass(
+            	packageNms + "ScoreboardTeam",
+            	packageNm + "world.scores.ScoreboardTeam"
+            );
             scoreboard = ReflectionUtils.getFirstClass(
             	packageNms + "Scoreboard",
             	packageNm + "world.scores.Scoreboard"
@@ -294,6 +297,10 @@ public class VersionAdapter implements IVersionAdapter {
             scoreboardINST = new ClassInstanceBuilder(
             	scoreboard
             ).build();
+            packetPlayOutScoreboardTeam = ReflectionUtils.getFirstClass(
+            	packageNms + "PacketPlayOutScoreboardTeam",
+            	packageNm + "network.protocol.game.PacketPlayOutScoreboardTeam"
+            );
             craftPlayer = ReflectionUtils.getClass(packageObc + "entity.CraftPlayer");
             craftPlayer_getHandle = ReflectionUtils.getMethod(craftPlayer, "getHandle");
             player$Spigot = ReflectionUtils.getClass(packageOb + "entity.Player$Spigot");
@@ -433,11 +440,7 @@ public class VersionAdapter implements IVersionAdapter {
     public void sendTitle(@NonNull Player player, String title, String subtitle) {
     	try {
     		if (title != null && !title.isEmpty()) {
-    			Object component = new ClassInstanceBuilder(
-    				chatComponentText
-    			).withArgs(
-    				title
-    			).build();
+    			Object component = createChatComponentText(title);
     			Object titlePacket = new ClassInstanceBuilder(
     				packageNms + "PacketPlayOutTitle"
     			).withArgs(
@@ -448,11 +451,7 @@ public class VersionAdapter implements IVersionAdapter {
     		}
     		
     		if (subtitle != null && !subtitle.isEmpty()) {
-    			Object component = new ClassInstanceBuilder(
-    				chatComponentText
-    			).withArgs(
-    				subtitle
-    			).build();
+    			Object component = createChatComponentText(subtitle);
     			Object subtitlePacket = new ClassInstanceBuilder(
     				packageNms + "PacketPlayOutTitle"
     			).withArgs(
@@ -472,16 +471,8 @@ public class VersionAdapter implements IVersionAdapter {
     	    String headerText = header != null ? String.join("\n", header) : "";
     	    String footerText = footer != null ? String.join("\n", footer) : "";
 
-    	    Object headerComponent = new ClassInstanceBuilder(
-    	    	chatComponentText
-    	    ).withArgs(
-    	    	headerText
-    	    ).build();
-    	    Object footerComponent = new ClassInstanceBuilder(
-    	    	chatComponentText
-    	    ).withArgs(
-    	    	footerText
-    	    ).build();
+    	    Object headerComponent = createChatComponentText(headerText);
+    	    Object footerComponent = createChatComponentText(footerText);
             
             Object packet = new ClassInstanceBuilder(
             	packageNms + "PacketPlayOutPlayerListHeaderFooter"
@@ -569,14 +560,14 @@ public class VersionAdapter implements IVersionAdapter {
     @Override
     public void sendActionbar(@NonNull Player player, @NonNull String message) {
 		try {
-			Object chatMessage = VersionProvider.get().createChatComponentText(message);
+			Object chatMessage = createChatComponentText(message);
 			Object packet = new ClassInstanceBuilder(
 				packageNms + "PacketPlayOutChat"
 			).withArgs(
 				chatMessage,
 				(byte) 2
 			).build();
-			PlayerUtils.sendPacket(player, packet);
+			sendPacket(player, packet);
 		} catch (Exception e) {
 	        throw new RuntimeException(e);
 	    }
@@ -588,41 +579,40 @@ public class VersionAdapter implements IVersionAdapter {
 			Set<String> players = Set.of(player.getName());
 			
 			Object team = new ClassInstanceBuilder(
-				scoreboardTeam()
+				scoreboardTeam
 			).withArgs(
 				scoreboardINST,
 				player.getName()
 			).build();
+			scoreboardTeam_setDisplayName().invoke(team,
+				createChatComponentText(player.getName())
+			);
+			scoreboardTeam_setPrefix().invoke(team,
+				createChatComponentText(prefix)
+			);
+			scoreboardTeam_setSuffix().invoke(team,
+				createChatComponentText(suffix)
+			);
 			
 	        Object createPacket = new ClassInstanceBuilder(
-	        	packetPlayOutScoreboardTeam()
+	        	packetPlayOutScoreboardTeam
 	        ).withArgs(
 	        	team,
 	        	players,
 	        	0
 	        ).build();
-	        ReflectionUtils.setField(createPacket, packetPlayOutScoreboardTeam_name(), player.getName());
-	        ReflectionUtils.setField(createPacket, packetPlayOutScoreboardTeam_displayName(), player.getName());
 	
 	        Object updatePacket = new ClassInstanceBuilder(
-	        	packetPlayOutScoreboardTeam()
+	        	packetPlayOutScoreboardTeam
 	        ).withArgs(
 	        	team,
 	        	players,
 	        	2
 	        ).build();
-	        ReflectionUtils.setField(updatePacket, packetPlayOutScoreboardTeam_name(), player.getName());
-	        ReflectionUtils.setField(updatePacket, packetPlayOutScoreboardTeam_displayName(), player.getName());
-	        
-	        ReflectionUtils.setField(createPacket, packetPlayOutScoreboardTeam_prefix(), prefix);
-	        ReflectionUtils.setField(updatePacket, packetPlayOutScoreboardTeam_prefix(), prefix);
-	        
-	        ReflectionUtils.setField(createPacket, packetPlayOutScoreboardTeam_suffix(), suffix);
-	        ReflectionUtils.setField(updatePacket, packetPlayOutScoreboardTeam_suffix(), suffix);
 	        
 	        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-	        	PlayerUtils.sendPacket(onlinePlayer, createPacket);
-	        	PlayerUtils.sendPacket(onlinePlayer, updatePacket);
+	        	sendPacket(onlinePlayer, createPacket);
+	        	sendPacket(onlinePlayer, updatePacket);
 	        }
 		} catch (Exception e) {
 	        throw new RuntimeException(e);
@@ -635,23 +625,25 @@ public class VersionAdapter implements IVersionAdapter {
 			Set<String> players = Set.of(player.getName());
 			
 			Object team = new ClassInstanceBuilder(
-				scoreboardTeam()
+				scoreboardTeam
 			).withArgs(
 				scoreboardINST,
 				player.getName()
 			).build();
+			scoreboardTeam_setDisplayName().invoke(team,
+				createChatComponentText(player.getName())
+			);
 			
 	        Object removePacket = new ClassInstanceBuilder(
-	        	packetPlayOutScoreboardTeam()
+	        	packetPlayOutScoreboardTeam
 	        ).withArgs(
 	        	team,
 	        	players,
 	        	4
 	        ).build();
-	        ReflectionUtils.setField(removePacket, packetPlayOutScoreboardTeam_name(), player.getName());
 			
 	        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
-	        	PlayerUtils.sendPacket(onlinePlayer, removePacket);
+	        	sendPacket(onlinePlayer, removePacket);
 	        }
 		} catch (Exception e) {
 	        throw new RuntimeException(e);

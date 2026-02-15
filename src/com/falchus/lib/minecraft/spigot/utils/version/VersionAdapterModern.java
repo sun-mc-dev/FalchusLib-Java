@@ -3,8 +3,10 @@ package com.falchus.lib.minecraft.spigot.utils.version;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -127,6 +129,32 @@ public class VersionAdapterModern extends VersionAdapter_v1_9_R1 {
     		Array.newInstance(bossFlag(), 0).getClass()
     	);
     }
+    private Method scoreboardTeam_setDisplayName() {
+    	return ReflectionUtils.getDeclaredMethod(scoreboardTeam, "setDisplayName",
+			chatComponentText
+    	);
+    }
+    private Method scoreboardTeam_setPrefix() {
+    	return ReflectionUtils.getDeclaredMethod(scoreboardTeam, "setPrefix",
+			chatComponentText
+    	);
+    }
+    private Method scoreboardTeam_setSuffix() {
+    	return ReflectionUtils.getDeclaredMethod(scoreboardTeam, "setSuffix",
+			chatComponentText
+    	);
+    }
+    private Method packetPlayOutScoreboardTeam_createAddOrModifyPacket() {
+    	return ReflectionUtils.getDeclaredMethod(packetPlayOutScoreboardTeam, "i",
+    		scoreboardTeam,
+    		boolean.class
+    	);
+    }
+    private Method packetPlayOutScoreboardTeam_createRemovePacket() {
+    	return ReflectionUtils.getDeclaredMethod(packetPlayOutScoreboardTeam, "i",
+    		scoreboardTeam
+    	);
+    }
 	
 	@Override
 	public Object createChatComponentText(@NonNull String text) {
@@ -210,7 +238,7 @@ public class VersionAdapterModern extends VersionAdapter_v1_9_R1 {
 	public void sendTitle(@NonNull Player player, String title, String subtitle) {
 		try {
 			if (title != null && !title.isEmpty()) {
-				Object component = chatComponentText_literal().invoke(null, title);
+				Object component = createChatComponentText(title);
 	            Object packet = new ClassInstanceBuilder(
             		clientboundSetTitleTextPacket()
                 ).withArgs(
@@ -220,7 +248,7 @@ public class VersionAdapterModern extends VersionAdapter_v1_9_R1 {
 			}
 			
             if (subtitle != null && !subtitle.isEmpty()) {
-				Object component = chatComponentText_literal().invoke(null, subtitle);
+				Object component = createChatComponentText(subtitle);
 	            Object packet = new ClassInstanceBuilder(
             		clientboundSetSubtitleTextPacket()
                 ).withArgs(
@@ -239,8 +267,8 @@ public class VersionAdapterModern extends VersionAdapter_v1_9_R1 {
     	    String headerText = header != null ? String.join("\n", header) : "";
     	    String footerText = footer != null ? String.join("\n", footer) : "";
     	    
-            Object headerComponent = chatComponentText_literal().invoke(null, headerText);
-            Object footerComponent = chatComponentText_literal().invoke(null, footerText);
+            Object headerComponent = createChatComponentText(headerText);
+            Object footerComponent = createChatComponentText(footerText);
             
             Object packet = new ClassInstanceBuilder(
         		clientboundPlayerListHeaderFooter()
@@ -301,7 +329,42 @@ public class VersionAdapterModern extends VersionAdapter_v1_9_R1 {
     @Override
     public void sendNametag(@NonNull Player player, @NonNull String prefix, @NonNull String suffix) {
 		try {
-			// TODO
+			Set<String> players = Set.of(player.getName());
+			
+			Object team = new ClassInstanceBuilder(
+				scoreboardTeam
+			).withArgs(
+				scoreboardINST,
+				player.getName()
+			).build();
+			scoreboardTeam_setDisplayName().invoke(team,
+				createChatComponentText(player.getName())
+			);
+			scoreboardTeam_setPrefix().invoke(team,
+				createChatComponentText(prefix)
+			);
+			scoreboardTeam_setSuffix().invoke(team,
+				createChatComponentText(suffix)
+			);
+			
+			Object createPacket = packetPlayOutScoreboardTeam_createAddOrModifyPacket()
+				.invoke(null,
+					team,
+					false
+				);
+	
+	        Object updatePacket = new ClassInstanceBuilder(
+	        	packetPlayOutScoreboardTeam
+	        ).withArgs(
+	        	team,
+	        	players,
+	        	2
+	        ).build();
+	        
+	        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+	        	sendPacket(onlinePlayer, createPacket);
+	        	sendPacket(onlinePlayer, updatePacket);
+	        }
 		} catch (Exception e) {
 	        throw new RuntimeException(e);
 	    }
@@ -310,7 +373,24 @@ public class VersionAdapterModern extends VersionAdapter_v1_9_R1 {
     @Override
     public void removeNametag(@NonNull Player player) {
 		try {
-			// TODO
+			Object team = new ClassInstanceBuilder(
+				scoreboardTeam
+			).withArgs(
+				scoreboardINST,
+				player.getName()
+			).build();
+			scoreboardTeam_setDisplayName().invoke(team,
+				createChatComponentText(player.getName())
+			);
+			
+			Object removePacket = packetPlayOutScoreboardTeam_createRemovePacket()
+				.invoke(null,
+					team
+				);
+			
+			for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+				sendPacket(onlinePlayer, removePacket);
+			}
 		} catch (Exception e) {
 	        throw new RuntimeException(e);
 	    }
