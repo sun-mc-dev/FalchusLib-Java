@@ -389,25 +389,6 @@ public class VersionAdapter implements IVersionAdapter {
             throw new RuntimeException(e);
         }
     }
-	
-    @Override
-    public Object createPacket(@NonNull Class<?> clazz, Object... args) {
-    	try {
-    		Class<?>[] arg = new Class<?>[args.length];
-    		for (int i = 0; i < args.length; i++) {
-    			arg[i] = args[i].getClass();
-    		}
-
-    		Constructor<?> ctor = ReflectionUtils.getFirstConstructor(clazz,
-				Set.of(
-					List.of(arg)
-				)
-			);
-    		return ctor.newInstance(args);
-    	} catch (Exception e) {
-            throw new RuntimeException("Failed to create packet for class " + clazz.getName(), e);
-        }
-    }
     
     @Override
     public void sendTitle(@NonNull Player player, String title, String subtitle) {

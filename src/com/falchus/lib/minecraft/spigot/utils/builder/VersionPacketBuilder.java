@@ -1,7 +1,10 @@
 package com.falchus.lib.minecraft.spigot.utils.builder;
 
+import java.lang.reflect.Constructor;
+import java.util.List;
+import java.util.Set;
+
 import com.falchus.lib.minecraft.spigot.FalchusLibMinecraftSpigot;
-import com.falchus.lib.minecraft.spigot.utils.version.VersionProvider;
 import com.falchus.lib.utils.ReflectionUtils;
 
 import lombok.Getter;
@@ -52,6 +55,21 @@ public class VersionPacketBuilder {
 		if (packet == null) {
 			throw new IllegalStateException("Packet class must be set");
 		}
-		return VersionProvider.get().createPacket(packet, args);
+		
+    	try {
+    		Class<?>[] arg = new Class<?>[args.length];
+    		for (int i = 0; i < args.length; i++) {
+    			arg[i] = args[i].getClass();
+    		}
+
+    		Constructor<?> ctor = ReflectionUtils.getFirstConstructor(packet,
+				Set.of(
+					List.of(arg)
+				)
+			);
+    		return ctor.newInstance(args);
+    	} catch (Exception e) {
+            throw new RuntimeException("Failed to create packet for class " + packet.getName(), e);
+        }
 	}
 }

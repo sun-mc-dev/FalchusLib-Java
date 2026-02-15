@@ -13,7 +13,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import com.falchus.lib.minecraft.spigot.enums.Sound;
-import com.falchus.lib.minecraft.spigot.utils.builder.VersionPacketBuilder;
 import com.mojang.authlib.GameProfile;
 
 import lombok.NonNull;
@@ -62,12 +61,6 @@ public interface IVersionAdapter {
 	 * Sends a raw NMS packet to a player.
 	 */
 	void sendPacket(@NonNull Player player, @NonNull Object packet);
-	
-	/**
-	 * Creates an instance of a packet.
-	 * Use {@link VersionPacketBuilder}
-	 */
-	Object createPacket(@NonNull Class<?> packetClass, Object... constructorArgs);
 	
 	/**
 	 * Sends a title and/or subtitle to a player.
