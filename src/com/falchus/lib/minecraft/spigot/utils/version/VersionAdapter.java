@@ -391,16 +391,21 @@ public class VersionAdapter implements IVersionAdapter {
     }
 	
     @Override
-    public Object createPacket(@NonNull Class<?> packetClass, Object... constructorArgs) {
+    public Object createPacket(@NonNull Class<?> clazz, Object... args) {
     	try {
-    		for (Constructor<?> constructor : packetClass.getConstructors()) {
-    			if (constructor.getParameterCount() == constructorArgs.length) {
-    				return constructor.newInstance(constructorArgs);
-    			}
+    		Class<?>[] arg = new Class<?>[args.length];
+    		for (int i = 0; i < args.length; i++) {
+    			arg[i] = args[i].getClass();
     		}
-    		throw new IllegalArgumentException("No matching constructor found for packet: " + packetClass.getName());
+
+    		Constructor<?> ctor = ReflectionUtils.getFirstConstructor(clazz,
+				Set.of(
+					List.of(arg)
+				)
+			);
+    		return ctor.newInstance(args);
     	} catch (Exception e) {
-            throw new RuntimeException("Failed to create packet for class " + packetClass.getName(), e);
+            throw new RuntimeException("Failed to create packet for class " + clazz.getName(), e);
         }
     }
     

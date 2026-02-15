@@ -6,7 +6,6 @@ import com.falchus.lib.utils.ReflectionUtils;
 
 import lombok.Getter;
 import lombok.NonNull;
-import lombok.SneakyThrows;
 
 @Getter
 public class VersionPacketBuilder {
@@ -25,16 +24,15 @@ public class VersionPacketBuilder {
 	/**
 	 * Creates a new {@link VersionPacketBuilder} for the given packet by class name (full package).
 	 */
-	@SneakyThrows
-	public VersionPacketBuilder(@NonNull String className) {
-		this.packet = Class.forName(className);
+	public VersionPacketBuilder(@NonNull String name) {
+		this.packet = ReflectionUtils.getClass(name);
 	}
 	
 	/**
 	 * Creates a new {@link VersionPacketBuilder} for the given packet by trying class names (full packages).
 	 */
-	public VersionPacketBuilder(@NonNull String... classNames) {
-		this.packet = ReflectionUtils.getFirstClass(classNames);
+	public VersionPacketBuilder(@NonNull String... names) {
+		this.packet = ReflectionUtils.getFirstClass(names);
 	}
 	
 	/**
