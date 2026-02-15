@@ -15,7 +15,10 @@ import net.md_5.bungee.api.chat.TextComponent;
 public class VersionAdapter_v1_9_R1 extends VersionAdapter {
 	
 	private Method player$Spigot_sendMessage() {
-		return ReflectionUtils.getMethod(player$Spigot, "sendMessage", ChatMessageType.class, BaseComponent[].class);
+		return ReflectionUtils.getMethod(player$Spigot, "sendMessage",
+			ChatMessageType.class,
+			BaseComponent[].class
+		);
 	}
 	
     @Override

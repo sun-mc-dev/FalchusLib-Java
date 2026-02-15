@@ -35,7 +35,9 @@ public class ClassInstanceBuilder {
 	 * Creates a new {@link ClassInstanceBuilder} by first class.
 	 */
 	public ClassInstanceBuilder(@NonNull String... names) {
-		this.clazz = ReflectionUtils.getFirstClass(names);
+		this.clazz = ReflectionUtils.getFirstClass(
+			names
+		);
 	}
 	
 	/**
@@ -67,7 +69,9 @@ public class ClassInstanceBuilder {
 					List.of(arg)
 				)
 			);
-    		return ctor.newInstance(args);
+    		return ctor.newInstance(
+    			args
+    		);
     	} catch (Exception e) {
             throw new RuntimeException("Failed to create class instance: " + clazz.getName(), e);
         }

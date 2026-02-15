@@ -14,6 +14,7 @@ import com.falchus.lib.minecraft.spigot.utils.EntityUtils;
 import com.falchus.lib.minecraft.spigot.utils.ServerUtils;
 import com.falchus.lib.minecraft.spigot.utils.WorldUtils;
 import com.falchus.lib.minecraft.spigot.utils.version.VersionProvider;
+import com.falchus.lib.utils.builder.ClassInstanceBuilder;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 
@@ -88,15 +89,21 @@ public class EntityPlayerBuilder {
 			if (skinValue != null && skinSignature != null) {
 				profile.getProperties().put("textures", new Property("textures", skinValue, skinSignature));
 			}
-			
-			Object playerInteractManager = VersionProvider.get().getPlayerInteractManager().getConstructor(world.getClass()).newInstance(world);
-			
-			Object entityPlayer = VersionProvider.get().getEntityPlayer().getConstructor(
-				server.getClass(),
-				world.getClass(),
-				profile.getClass(),
-				playerInteractManager.getClass()
-			).newInstance(server, world, profile, playerInteractManager);
+
+			Object playerInteractManager = new ClassInstanceBuilder(
+				VersionProvider.get().getPlayerInteractManager()
+			).withArgs(
+				world
+			).build();
+
+			Object entityPlayer = new ClassInstanceBuilder(
+				VersionProvider.get().getEntityPlayer()
+			).withArgs(
+				server,
+				world,
+				profile,
+				playerInteractManager
+			).build();
 			
 			if (location != null) {
 				VersionProvider.get().getEntity_setLocation().invoke(entityPlayer, location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());

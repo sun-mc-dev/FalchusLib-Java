@@ -1,6 +1,5 @@
 package com.falchus.lib.minecraft.spigot.player.elements;
 
-import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -10,6 +9,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 import com.falchus.lib.minecraft.spigot.FalchusLibMinecraftSpigot;
+import com.falchus.lib.utils.builder.ClassInstanceBuilder;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -105,9 +105,9 @@ public abstract class PlayerElement {
 		
 		return (T) map.computeIfAbsent(player.getUniqueId(), uuid -> {
 			try {
-				Constructor<T> ctor = clazz.getDeclaredConstructor(Player.class);
-	            ctor.setAccessible(true);
-	            return ctor.newInstance(player);
+				return (T) new ClassInstanceBuilder(clazz)
+						.withArgs(player)
+						.build();
 			} catch (Exception e) {
 				e.printStackTrace();
 				return null;

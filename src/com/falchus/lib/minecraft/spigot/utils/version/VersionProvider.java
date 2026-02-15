@@ -3,7 +3,7 @@ package com.falchus.lib.minecraft.spigot.utils.version;
 import org.bukkit.Bukkit;
 
 import com.falchus.lib.minecraft.spigot.utils.version.v1_9_R1.VersionAdapter_v1_9_R1;
-import com.falchus.lib.utils.ReflectionUtils;
+import com.falchus.lib.utils.builder.ClassInstanceBuilder;
 
 import lombok.experimental.UtilityClass;
 
@@ -41,8 +41,9 @@ public class VersionProvider {
         
         String version = parts[3];
 		try {
-			Class<?> clazz = ReflectionUtils.getClass(VersionProvider.class.getPackageName() + "." + version + "." + VersionAdapter.class.getSimpleName() + "_" + version);
-			return (IVersionAdapter) clazz.getDeclaredConstructor().newInstance();
+			return (IVersionAdapter) new ClassInstanceBuilder(
+				VersionProvider.class.getPackageName() + "." + version + "." + VersionAdapter.class.getSimpleName() + "_" + version
+			).build();
 		} catch (Exception e) {
 			return new VersionAdapter();
 		}

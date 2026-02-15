@@ -1,6 +1,5 @@
 package com.falchus.lib.minecraft.spigot.utils.version;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Collection;
@@ -101,7 +100,9 @@ public class VersionAdapter implements IVersionAdapter {
 		return ReflectionUtils.getMethod(nmsItemStack, "getTag");
 	}
 	private Method nmsItemStack_setTag() {
-		return ReflectionUtils.getMethod(nmsItemStack, "setTag", nbtTagCompound);
+		return ReflectionUtils.getMethod(nmsItemStack, "setTag",
+			nbtTagCompound
+		);
 	}
 	private Method nmsItemStack_hasTag() {
 		return ReflectionUtils.getMethod(nmsItemStack, "hasTag");
@@ -119,9 +120,6 @@ public class VersionAdapter implements IVersionAdapter {
 	@SneakyThrows private Object enumTitle$Action_SUBTITLE() {
     	return ReflectionUtils.getField(enumTitle$Action(), "SUBTITLE").get(null);
     }
-    private Class<?> world() {
-    	return ReflectionUtils.getClass(packageNms + "World");
-    }
     private Class<?> craftWorld() {
     	return ReflectionUtils.getClass(packageObc + "CraftWorld");
     }
@@ -129,10 +127,14 @@ public class VersionAdapter implements IVersionAdapter {
     	return ReflectionUtils.getMethod(craftWorld(), "getHandle");
     }
     private Method entity_setCustomName() {
-    	return ReflectionUtils.getMethod(entity, "setCustomName", String.class);
+    	return ReflectionUtils.getMethod(entity, "setCustomName",
+    		String.class
+    	);
     }
     private Method entity_setCustomNameVisible() {
-    	return ReflectionUtils.getMethod(entity, "setCustomNameVisible", boolean.class);
+    	return ReflectionUtils.getMethod(entity, "setCustomNameVisible",
+    		boolean.class
+    	);
     }
     private Method entity_getId() {
     	return ReflectionUtils.getMethod(entity, "getId");
@@ -144,7 +146,9 @@ public class VersionAdapter implements IVersionAdapter {
     	return ReflectionUtils.getClass(packageNms + "EntityLiving");
     }
     private Method entityLiving_setHealth() {
-    	return ReflectionUtils.getMethod(entityLiving(), "setHealth", float.class);
+    	return ReflectionUtils.getMethod(entityLiving(), "setHealth",
+    		float.class
+    	);
     }
     private Method entityLiving_getMaxHealth() {
     	return ReflectionUtils.getMethod(entityLiving(), "getMaxHealth");
@@ -154,12 +158,6 @@ public class VersionAdapter implements IVersionAdapter {
     }
     private Class<?> scoreboardTeam() {
     	return ReflectionUtils.getClass(packageNms + "ScoreboardTeam");
-    }
-    private Constructor<?> scoreboardTeamCTOR() {
-    	return ReflectionUtils.getDeclaredConstructor(scoreboardTeam(),
-    		scoreboard,
-    		String.class
-    	);
     }
 	private Class<?> packetPlayOutScoreboardTeam() {
 		return ReflectionUtils.getClass(packageNms + "PacketPlayOutScoreboardTeam");
@@ -203,11 +201,20 @@ public class VersionAdapter implements IVersionAdapter {
             	packageNms + "Entity",
             	packageNm + "world.entity.Entity"
             );
-            entity_setLocation = ReflectionUtils.getFirstMethod(entity, List.of(double.class, double.class, double.class, float.class, float.class),
+            entity_setLocation = ReflectionUtils.getFirstMethod(entity,
+            	List.of(
+            		double.class,
+            		double.class,
+            		double.class,
+            		float.class,
+            		float.class
+            	),
         		"setLocation",
         		"a"
             );
-            entity_setInvisible = ReflectionUtils.getMethod(entity, "setInvisible", boolean.class);
+            entity_setInvisible = ReflectionUtils.getMethod(entity, "setInvisible",
+            	boolean.class
+            );
     		
             chatComponentText = ReflectionUtils.getFirstClass(
             	packageNms + "ChatComponentText",
@@ -215,14 +222,16 @@ public class VersionAdapter implements IVersionAdapter {
             );
             
             entity_getBukkitEntity = ReflectionUtils.getDeclaredMethod(entity, "getBukkitEntity");
-            entity_setYawPitch = ReflectionUtils.getFirstDeclaredMethod(entity, List.of(float.class, float.class),
+            entity_setYawPitch = ReflectionUtils.getFirstDeclaredMethod(entity,
+            	List.of(
+            		float.class,
+            		float.class
+            	),
             	"setYawPitch",
             	"setRot"
             );
             
-            craftItemStack = ReflectionUtils.getFirstClass(
-            	packageObc + "inventory.CraftItemStack"
-            );
+            craftItemStack = ReflectionUtils.getClass(packageObc + "inventory.CraftItemStack");
             nmsItemStack = ReflectionUtils.getFirstClass(
             	packageNms + "ItemStack",
             	packageNm + "world.item.ItemStack"
@@ -231,18 +240,33 @@ public class VersionAdapter implements IVersionAdapter {
             	packageNms + "NBTTagCompound",
             	packageNm + "nbt.NBTTagCompound"
             );
-            craftItemStack_asNMSCopy = ReflectionUtils.getMethod(craftItemStack, "asNMSCopy", ItemStack.class);
-            craftItemStack_asBukkitCopy = ReflectionUtils.getMethod(craftItemStack, "asBukkitCopy", nmsItemStack);
-            nbtTagCompound_setString = ReflectionUtils.getFirstMethod(nbtTagCompound, List.of(String.class, String.class),
+            craftItemStack_asNMSCopy = ReflectionUtils.getMethod(craftItemStack, "asNMSCopy",
+            	ItemStack.class
+            );
+            craftItemStack_asBukkitCopy = ReflectionUtils.getMethod(craftItemStack, "asBukkitCopy",
+            	nmsItemStack
+            );
+            nbtTagCompound_setString = ReflectionUtils.getFirstMethod(nbtTagCompound,
+            	List.of(
+            		String.class,
+            		String.class
+            	),
         		"setString",
         		"putString"
         	);
-            nbtTagCompound_remove = ReflectionUtils.getMethod(nbtTagCompound, "remove", String.class);
-            nbtTagCompound_hasKey = ReflectionUtils.getFirstMethod(nbtTagCompound, List.of(String.class),
+            nbtTagCompound_remove = ReflectionUtils.getMethod(nbtTagCompound, "remove",
+            	String.class
+            );
+            nbtTagCompound_hasKey = ReflectionUtils.getFirstMethod(nbtTagCompound,
+            	List.of(
+            		String.class
+            	),
             	"hasKey",
             	"contains"
             );
-            nbtTagCompound_getString = ReflectionUtils.getMethod(nbtTagCompound, "getString", String.class);
+            nbtTagCompound_getString = ReflectionUtils.getMethod(nbtTagCompound, "getString",
+            	String.class
+            );
     		
             packet = ReflectionUtils.getFirstClass(
             	packageNms + "Packet",
@@ -256,7 +280,10 @@ public class VersionAdapter implements IVersionAdapter {
             	packageNms + "PlayerConnection",
             	packageNms + "network.ServerPlayerConnection"
             );
-            playerConnection_sendPacket = ReflectionUtils.getFirstMethod(playerConnection, List.of(packet),
+            playerConnection_sendPacket = ReflectionUtils.getFirstMethod(playerConnection,
+            	List.of(
+            		packet
+            	),
             	"sendPacket",
             	"send"
             );
@@ -264,7 +291,9 @@ public class VersionAdapter implements IVersionAdapter {
             	packageNms + "Scoreboard",
             	packageNm + "world.scores.Scoreboard"
             );
-            scoreboardINST = ReflectionUtils.getConstructor(scoreboard).newInstance();
+            scoreboardINST = new ClassInstanceBuilder(
+            	scoreboard
+            ).build();
             craftPlayer = ReflectionUtils.getClass(packageObc + "entity.CraftPlayer");
             craftPlayer_getHandle = ReflectionUtils.getMethod(craftPlayer, "getHandle");
             player$Spigot = ReflectionUtils.getClass(packageOb + "entity.Player$Spigot");
@@ -294,7 +323,9 @@ public class VersionAdapter implements IVersionAdapter {
     			packageNm + "world.level.biome.BiomeBase"
     		);
             biomeBase_biomes = ReflectionUtils.getDeclaredField(biomeBase, "biomes");
-            biomeBase_getBiome = ReflectionUtils.getMethod(biomeBase, "getBiome", int.class);
+            biomeBase_getBiome = ReflectionUtils.getMethod(biomeBase, "getBiome",
+            	int.class
+            );
 		} catch (Exception e) {
     		throw new IllegalStateException("Failed to initialize " + getClass().getSimpleName(), e);
     	}
@@ -303,7 +334,11 @@ public class VersionAdapter implements IVersionAdapter {
 	@Override
 	public Object createChatComponentText(@NonNull String text) {
 		try {
-			return chatComponentText.getConstructor(String.class).newInstance(text);
+			return new ClassInstanceBuilder(
+				chatComponentText
+			).withArgs(
+				text
+			).build();
 		} catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -333,7 +368,9 @@ public class VersionAdapter implements IVersionAdapter {
     		Object nmsItem = craftItemStack_asNMSCopy.invoke(null, item);
     		if (nmsItem == null) return item;
     		
-    		Object tag = (boolean) nmsItemStack_hasTag().invoke(nmsItem) ? nmsItemStack_getTag().invoke(nmsItem) : nbtTagCompound.getConstructor().newInstance();
+    		Object tag = (boolean) nmsItemStack_hasTag().invoke(nmsItem)
+    				? nmsItemStack_getTag().invoke(nmsItem)
+    				: nbtTagCompound.getConstructor().newInstance();
     		if (uuid == null) {
     			nbtTagCompound_remove.invoke(tag, "UUID");
     		} else {
@@ -370,7 +407,9 @@ public class VersionAdapter implements IVersionAdapter {
     		Object nmsItem = craftItemStack_asNMSCopy.invoke(null, item);
     		if (nmsItem == null) return item;
     		
-    		Object tag = nbtTagCompound.getConstructor().newInstance();
+    		Object tag = new ClassInstanceBuilder(
+    			nbtTagCompound
+    		).build();
     		nmsItemStack_setTag().invoke(nmsItem, tag);
     		
     		return (ItemStack) craftItemStack_asBukkitCopy.invoke(null, nmsItem);
@@ -394,24 +433,32 @@ public class VersionAdapter implements IVersionAdapter {
     public void sendTitle(@NonNull Player player, String title, String subtitle) {
     	try {
     		if (title != null && !title.isEmpty()) {
-    			Object component = chatComponentText.getConstructor(String.class).newInstance(title);
-    			Object titlePacket = new ClassInstanceBuilder(packageNms + "PacketPlayOutTitle")
-    					.withArgs(
-    						enumTitle$Action_TITLE(),
-    						component
-    					)
-    					.build();
+    			Object component = new ClassInstanceBuilder(
+    				chatComponentText
+    			).withArgs(
+    				title
+    			).build();
+    			Object titlePacket = new ClassInstanceBuilder(
+    				packageNms + "PacketPlayOutTitle"
+    			).withArgs(
+    				enumTitle$Action_TITLE(),
+    				component
+    			).build();
     			sendPacket(player, titlePacket);
     		}
     		
     		if (subtitle != null && !subtitle.isEmpty()) {
-    			Object component = chatComponentText.getConstructor(String.class).newInstance(subtitle);
-    			Object subtitlePacket = new ClassInstanceBuilder(packageNms + "PacketPlayOutTitle")
-    					.withArgs(
-    						enumTitle$Action_SUBTITLE(),
-    						component
-    					)
-    					.build();
+    			Object component = new ClassInstanceBuilder(
+    				chatComponentText
+    			).withArgs(
+    				subtitle
+    			).build();
+    			Object subtitlePacket = new ClassInstanceBuilder(
+    				packageNms + "PacketPlayOutTitle"
+    			).withArgs(
+    				enumTitle$Action_SUBTITLE(),
+    				component
+    			).build();
     			sendPacket(player, subtitlePacket);
     		}
     	} catch (Exception e) {
@@ -424,15 +471,23 @@ public class VersionAdapter implements IVersionAdapter {
     	try {
     	    String headerText = header != null ? String.join("\n", header) : "";
     	    String footerText = footer != null ? String.join("\n", footer) : "";
-    	    
-    	    Object headerComponent = chatComponentText.getConstructor(String.class).newInstance(headerText);
-            Object footerComponent = chatComponentText.getConstructor(String.class).newInstance(footerText);
+
+    	    Object headerComponent = new ClassInstanceBuilder(
+    	    	chatComponentText
+    	    ).withArgs(
+    	    	headerText
+    	    ).build();
+    	    Object footerComponent = new ClassInstanceBuilder(
+    	    	chatComponentText
+    	    ).withArgs(
+    	    	footerText
+    	    ).build();
             
-            Object packet = new ClassInstanceBuilder(packageNms + "PacketPlayOutPlayerListHeaderFooter")
-            		.withArgs(
-            			headerComponent
-            		)
-            		.build();
+            Object packet = new ClassInstanceBuilder(
+            	packageNms + "PacketPlayOutPlayerListHeaderFooter"
+            ).withArgs(
+            	headerComponent
+            ).build();
             
             ReflectionUtils.setField(packet, "b", footerComponent);
             
@@ -455,7 +510,11 @@ public class VersionAdapter implements IVersionAdapter {
             float pitch = Math.max(-15, Math.min(15, eye.getPitch()));
             
             Object worldServer = getWorldServer(player.getWorld());
-            Object wither = entityWither().getConstructor(world()).newInstance(worldServer);
+            Object wither = new ClassInstanceBuilder(
+            	entityWither()
+            ).withArgs(
+            	worldServer
+            ).build();
             
             entity_setInvisible.invoke(wither, true);
             entity_setCustomName().invoke(wither, title);
@@ -467,20 +526,20 @@ public class VersionAdapter implements IVersionAdapter {
             
             entity_setLocation.invoke(wither, location.getX(), location.getY(), location.getZ(), yaw, pitch);
             
-            Object spawnPacket = new ClassInstanceBuilder(packageNms + "PacketPlayOutSpawnEntityLiving")
-            		.withArgs(
-            			wither
-            		)
-            		.build();
+            Object spawnPacket = new ClassInstanceBuilder(
+            	packageNms + "PacketPlayOutSpawnEntityLiving"
+            ).withArgs(
+            	wither
+            ).build();
             sendPacket(player, spawnPacket);
             
-            Object metadataPacket = new ClassInstanceBuilder(packageNms + "PacketPlayOutEntityMetadata")
-            		.withArgs(
-            			entity_getId().invoke(wither),
-            			entity_getDataWatcher().invoke(wither),
-            			true
-            		)
-            		.build();
+            Object metadataPacket = new ClassInstanceBuilder(
+            	packageNms + "PacketPlayOutEntityMetadata"
+            ).withArgs(
+            	entity_getId().invoke(wither),
+            	entity_getDataWatcher().invoke(wither),
+            	true
+            ).build();
             sendPacket(player, metadataPacket);
             
             bossBars.put(player, wither);
@@ -495,11 +554,11 @@ public class VersionAdapter implements IVersionAdapter {
     		Object wither = bossBars.remove(player);
     		if (wither != null) {
     			int id = (int) entity_getId().invoke(wither);
-    			Object destroyPacket = new ClassInstanceBuilder(packageNms + "PacketPlayOutEntityDestroy")
-    					.withArgs(
-    						new int[] { id }
-    					)
-    					.build();
+    			Object destroyPacket = new ClassInstanceBuilder(
+    				packageNms + "PacketPlayOutEntityDestroy"
+    			).withArgs(
+    				new int[] { id }
+    			).build();
     			sendPacket(player, destroyPacket);
     		}
     	} catch (Exception e) {
@@ -511,12 +570,12 @@ public class VersionAdapter implements IVersionAdapter {
     public void sendActionbar(@NonNull Player player, @NonNull String message) {
 		try {
 			Object chatMessage = VersionProvider.get().createChatComponentText(message);
-			Object packet = new ClassInstanceBuilder(packageNms + "PacketPlayOutChat")
-					.withArgs(
-						chatMessage,
-						(byte) 2
-					)
-					.build();
+			Object packet = new ClassInstanceBuilder(
+				packageNms + "PacketPlayOutChat"
+			).withArgs(
+				chatMessage,
+				(byte) 2
+			).build();
 			PlayerUtils.sendPacket(player, packet);
 		} catch (Exception e) {
 	        throw new RuntimeException(e);
@@ -528,28 +587,30 @@ public class VersionAdapter implements IVersionAdapter {
 		try {
 			Set<String> players = Set.of(player.getName());
 			
-			Object team = scoreboardTeamCTOR().newInstance(
-				scoreboard,
+			Object team = new ClassInstanceBuilder(
+				scoreboardTeam()
+			).withArgs(
+				scoreboardINST,
 				player.getName()
-			);
+			).build();
 			
-	        Object createPacket = new ClassInstanceBuilder(packetPlayOutScoreboardTeam())
-	        		.withArgs(
-	        			team,
-	        			players,
-	        			0
-	        		)
-	        		.build();
+	        Object createPacket = new ClassInstanceBuilder(
+	        	packetPlayOutScoreboardTeam()
+	        ).withArgs(
+	        	team,
+	        	players,
+	        	0
+	        ).build();
 	        ReflectionUtils.setField(createPacket, packetPlayOutScoreboardTeam_name(), player.getName());
 	        ReflectionUtils.setField(createPacket, packetPlayOutScoreboardTeam_displayName(), player.getName());
 	
-	        Object updatePacket = new ClassInstanceBuilder(packetPlayOutScoreboardTeam())
-	        		.withArgs(
-	        			team,
-	        			players,
-	        			2
-	        		)
-	        		.build();
+	        Object updatePacket = new ClassInstanceBuilder(
+	        	packetPlayOutScoreboardTeam()
+	        ).withArgs(
+	        	team,
+	        	players,
+	        	2
+	        ).build();
 	        ReflectionUtils.setField(updatePacket, packetPlayOutScoreboardTeam_name(), player.getName());
 	        ReflectionUtils.setField(updatePacket, packetPlayOutScoreboardTeam_displayName(), player.getName());
 	        
@@ -573,18 +634,20 @@ public class VersionAdapter implements IVersionAdapter {
 		try {
 			Set<String> players = Set.of(player.getName());
 			
-			Object team = scoreboardTeamCTOR().newInstance(
-				scoreboard,
+			Object team = new ClassInstanceBuilder(
+				scoreboardTeam()
+			).withArgs(
+				scoreboardINST,
 				player.getName()
-			);
+			).build();
 			
-	        Object removePacket = new ClassInstanceBuilder(packetPlayOutScoreboardTeam())
-	        		.withArgs(
-	        			team,
-	        			players,
-	        			4
-	        		)
-	        		.build();
+	        Object removePacket = new ClassInstanceBuilder(
+	        	packetPlayOutScoreboardTeam()
+	        ).withArgs(
+	        	team,
+	        	players,
+	        	4
+	        ).build();
 	        ReflectionUtils.setField(removePacket, packetPlayOutScoreboardTeam_name(), player.getName());
 			
 	        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
@@ -715,9 +778,7 @@ public class VersionAdapter implements IVersionAdapter {
 	        player.setCustomNameVisible(true);
 	        player.setDisplayName(name);
 	        
-	        Field nameField = ReflectionUtils.getField(GameProfile.class, "name");
-	        nameField.setAccessible(true);
-	        nameField.set(profile, name);
+	        ReflectionUtils.setField(ReflectionUtils.getField(GameProfile.class, "name"), name);
 
 	        refresh(player);
     	} catch (Exception e) {
@@ -730,17 +791,12 @@ public class VersionAdapter implements IVersionAdapter {
     	try {
 	        String original = PlayerUtils.names.get(player.getUniqueId());
 	        if (original == null) return;
-	        
-	        Object entityPlayer = getEntityPlayer(player);
-    		GameProfile profile = getProfile(entityPlayer);
     		
 	        player.setCustomName(original);
 	        player.setCustomNameVisible(true);
 	        player.setDisplayName(original);
 
-	        Field nameField = ReflectionUtils.getField(GameProfile.class, "name");
-	        nameField.setAccessible(true);
-	        nameField.set(profile, original);
+	        ReflectionUtils.setField(ReflectionUtils.getField(GameProfile.class, "name"), original);
 
 	        refresh(player);
 
@@ -792,12 +848,12 @@ public class VersionAdapter implements IVersionAdapter {
     public void removeEntityPlayer(@NonNull Player player, @NonNull Object entityPlayer) {
     	try {
     		Object remove = enumPlayerInfoAction_REMOVE_PLAYER();
-    		Object packet = new ClassInstanceBuilder(packageNms + "PacketPlayOutPlayerInfo")
-    				.withArgs(
-    					remove,
-    					List.of(entityPlayer)
-    				)
-    				.build();
+    		Object packet = new ClassInstanceBuilder(
+    			packageNms + "PacketPlayOutPlayerInfo"
+    		).withArgs(
+    			remove,
+    			List.of(entityPlayer)
+    		).build();
             sendPacket(player, packet);
     	} catch (Exception e) {
             throw new RuntimeException(e);
