@@ -36,13 +36,6 @@ public class PlayerUtils {
 	}
 	
 	/**
-	 * Creates an instance of a packet.
-	 */
-	public static Object createPacket(@NonNull Class<?> packetClass, Object... constructorArgs) {
-		return VersionProvider.get().createPacket(packetClass, constructorArgs);
-	}
-	
-	/**
 	 * Sends a title and/or subtitle to a player.
 	 */
 	public static void sendTitle(@NonNull Player player, String title, String subtitle) {

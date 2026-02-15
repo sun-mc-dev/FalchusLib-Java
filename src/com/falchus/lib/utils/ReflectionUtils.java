@@ -219,7 +219,7 @@ public class ReflectionUtils {
                 return found;
             }
         }
-        throw new RuntimeException("No matching constructor found for class:" + clazz.getName());
+        throw new RuntimeException("No matching constructor found for class: " + clazz.getName());
     }
     
     public static Constructor<?> getFirstDeclaredConstructor(@NonNull Class<?> clazz, Set<List<Class<?>>> params) {
@@ -229,6 +229,6 @@ public class ReflectionUtils {
                 return found;
             }
         }
-        throw new RuntimeException("No matching constructor found for class:" + clazz.getName());
+        throw new RuntimeException("No matching constructor found for class: " + clazz.getName());
     }
 }

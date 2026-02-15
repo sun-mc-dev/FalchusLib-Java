@@ -22,8 +22,8 @@ import com.falchus.lib.minecraft.spigot.FalchusLibMinecraftSpigot;
 import com.falchus.lib.minecraft.spigot.enums.Sound;
 import com.falchus.lib.minecraft.spigot.utils.PlayerUtils;
 import com.falchus.lib.minecraft.spigot.utils.builder.GameProfileBuilder;
-import com.falchus.lib.minecraft.spigot.utils.builder.VersionPacketBuilder;
 import com.falchus.lib.utils.ReflectionUtils;
+import com.falchus.lib.utils.builder.ClassInstanceBuilder;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 
@@ -395,7 +395,7 @@ public class VersionAdapter implements IVersionAdapter {
     	try {
     		if (title != null && !title.isEmpty()) {
     			Object component = chatComponentText.getConstructor(String.class).newInstance(title);
-    			Object titlePacket = new VersionPacketBuilder(packageNms + "PacketPlayOutTitle")
+    			Object titlePacket = new ClassInstanceBuilder(packageNms + "PacketPlayOutTitle")
     					.withArgs(
     						enumTitle$Action_TITLE(),
     						component
@@ -406,7 +406,7 @@ public class VersionAdapter implements IVersionAdapter {
     		
     		if (subtitle != null && !subtitle.isEmpty()) {
     			Object component = chatComponentText.getConstructor(String.class).newInstance(subtitle);
-    			Object subtitlePacket = new VersionPacketBuilder(packageNms + "PacketPlayOutTitle")
+    			Object subtitlePacket = new ClassInstanceBuilder(packageNms + "PacketPlayOutTitle")
     					.withArgs(
     						enumTitle$Action_SUBTITLE(),
     						component
@@ -428,7 +428,7 @@ public class VersionAdapter implements IVersionAdapter {
     	    Object headerComponent = chatComponentText.getConstructor(String.class).newInstance(headerText);
             Object footerComponent = chatComponentText.getConstructor(String.class).newInstance(footerText);
             
-            Object packet = new VersionPacketBuilder(packageNms + "PacketPlayOutPlayerListHeaderFooter")
+            Object packet = new ClassInstanceBuilder(packageNms + "PacketPlayOutPlayerListHeaderFooter")
             		.withArgs(
             			headerComponent
             		)
@@ -467,14 +467,14 @@ public class VersionAdapter implements IVersionAdapter {
             
             entity_setLocation.invoke(wither, location.getX(), location.getY(), location.getZ(), yaw, pitch);
             
-            Object spawnPacket = new VersionPacketBuilder(packageNms + "PacketPlayOutSpawnEntityLiving")
+            Object spawnPacket = new ClassInstanceBuilder(packageNms + "PacketPlayOutSpawnEntityLiving")
             		.withArgs(
             			wither
             		)
             		.build();
             sendPacket(player, spawnPacket);
             
-            Object metadataPacket = new VersionPacketBuilder(packageNms + "PacketPlayOutEntityMetadata")
+            Object metadataPacket = new ClassInstanceBuilder(packageNms + "PacketPlayOutEntityMetadata")
             		.withArgs(
             			entity_getId().invoke(wither),
             			entity_getDataWatcher().invoke(wither),
@@ -495,7 +495,7 @@ public class VersionAdapter implements IVersionAdapter {
     		Object wither = bossBars.remove(player);
     		if (wither != null) {
     			int id = (int) entity_getId().invoke(wither);
-    			Object destroyPacket = new VersionPacketBuilder(packageNms + "PacketPlayOutEntityDestroy")
+    			Object destroyPacket = new ClassInstanceBuilder(packageNms + "PacketPlayOutEntityDestroy")
     					.withArgs(
     						new int[] { id }
     					)
@@ -511,7 +511,7 @@ public class VersionAdapter implements IVersionAdapter {
     public void sendActionbar(@NonNull Player player, @NonNull String message) {
 		try {
 			Object chatMessage = VersionProvider.get().createChatComponentText(message);
-			Object packet = new VersionPacketBuilder(packageNms + "PacketPlayOutChat")
+			Object packet = new ClassInstanceBuilder(packageNms + "PacketPlayOutChat")
 					.withArgs(
 						chatMessage,
 						(byte) 2
@@ -533,7 +533,7 @@ public class VersionAdapter implements IVersionAdapter {
 				player.getName()
 			);
 			
-	        Object createPacket = new VersionPacketBuilder(packetPlayOutScoreboardTeam())
+	        Object createPacket = new ClassInstanceBuilder(packetPlayOutScoreboardTeam())
 	        		.withArgs(
 	        			team,
 	        			players,
@@ -543,7 +543,7 @@ public class VersionAdapter implements IVersionAdapter {
 	        ReflectionUtils.setField(createPacket, packetPlayOutScoreboardTeam_name(), player.getName());
 	        ReflectionUtils.setField(createPacket, packetPlayOutScoreboardTeam_displayName(), player.getName());
 	
-	        Object updatePacket = new VersionPacketBuilder(packetPlayOutScoreboardTeam())
+	        Object updatePacket = new ClassInstanceBuilder(packetPlayOutScoreboardTeam())
 	        		.withArgs(
 	        			team,
 	        			players,
@@ -578,7 +578,7 @@ public class VersionAdapter implements IVersionAdapter {
 				player.getName()
 			);
 			
-	        Object removePacket = new VersionPacketBuilder(packetPlayOutScoreboardTeam())
+	        Object removePacket = new ClassInstanceBuilder(packetPlayOutScoreboardTeam())
 	        		.withArgs(
 	        			team,
 	        			players,
@@ -603,7 +603,7 @@ public class VersionAdapter implements IVersionAdapter {
     @Override
     public void sendEndCredits(@NonNull Player player) {
     	try {
-    		Object packet = new VersionPacketBuilder(
+    		Object packet = new ClassInstanceBuilder(
     			packageNms + "PacketPlayOutGameStateChange",
     			packageNm + "network.protocol.game.ClientboundGameEventPacket"
     		).withArgs(
@@ -756,7 +756,7 @@ public class VersionAdapter implements IVersionAdapter {
     		Object entityPlayer = getEntityPlayer(player);
     		
     		Object update = enumPlayerInfo$Action_UPDATE_DISPLAY_NAME;
-    		Object packet = new VersionPacketBuilder(
+    		Object packet = new ClassInstanceBuilder(
 				packageNms + "PacketPlayOutPlayerInfo",
 				packageNm + "network.protocol.game.ClientboundPlayerInfoUpdatePacket"
 			).withArgs(
@@ -775,7 +775,7 @@ public class VersionAdapter implements IVersionAdapter {
     public void addEntityPlayer(@NonNull Player player, @NonNull Object entityPlayer) {
     	try {
     		Object add = enumPlayerInfo$Action_ADD_PLAYER;
-    		Object packet = new VersionPacketBuilder(
+    		Object packet = new ClassInstanceBuilder(
 				packageNms + "PacketPlayOutPlayerInfo",
 				packageNm + "network.protocol.game.ClientboundPlayerInfoUpdatePacket"
 			).withArgs(
@@ -792,7 +792,7 @@ public class VersionAdapter implements IVersionAdapter {
     public void removeEntityPlayer(@NonNull Player player, @NonNull Object entityPlayer) {
     	try {
     		Object remove = enumPlayerInfoAction_REMOVE_PLAYER();
-    		Object packet = new VersionPacketBuilder(packageNms + "PacketPlayOutPlayerInfo")
+    		Object packet = new ClassInstanceBuilder(packageNms + "PacketPlayOutPlayerInfo")
     				.withArgs(
     					remove,
     					List.of(entityPlayer)
@@ -809,7 +809,7 @@ public class VersionAdapter implements IVersionAdapter {
     	try {
     		addEntityPlayer(player, entityPlayer);
     		
-    		Object spawn = new VersionPacketBuilder(
+    		Object spawn = new ClassInstanceBuilder(
     			packageNms + "PacketPlayOutNamedEntitySpawn",
     			packageNm + "network.protocol.game.ClientboundAddPlayerPacket"
     		).withArgs(
@@ -817,7 +817,7 @@ public class VersionAdapter implements IVersionAdapter {
     		).build();
     		sendPacket(player, spawn);
     		
-    		Object teleport = new VersionPacketBuilder(
+    		Object teleport = new ClassInstanceBuilder(
     			packageNms + "PacketPlayOutEntityTeleport",
     			packageNm + "network.protocol.game.ClientboundPlayerPositionPacket"
     		).withArgs(
