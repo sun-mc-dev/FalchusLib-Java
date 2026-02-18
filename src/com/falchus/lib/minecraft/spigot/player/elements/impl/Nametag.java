@@ -13,8 +13,6 @@ public class Nametag extends PlayerElement {
 	
 	private Supplier<String> prefixSupplier;
 	private Supplier<String> suffixSupplier;
-	private String lastPrefix;
-	private String lastSuffix;
 	
 	private Nametag(@NonNull Player player) {
 		super(player);
@@ -31,11 +29,7 @@ public class Nametag extends PlayerElement {
 			String newPrefix = prefixSupplier.get();
 			String newSuffix = suffixSupplier.get();
 			
-			if (!newPrefix.equals(lastPrefix) || !newSuffix.equals(lastSuffix)) {
-		        PlayerUtils.sendNametag(player, newPrefix, newSuffix);
-		        lastPrefix = newPrefix;
-		        lastSuffix = newSuffix;
-			}
+	        PlayerUtils.sendNametag(player, newPrefix, newSuffix);
 		};
 		update();
 	}
