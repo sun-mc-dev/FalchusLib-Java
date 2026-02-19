@@ -119,13 +119,6 @@ public class PlayerUtils {
 	}
 	
 	/**
-	 * Sends the end credits screen to a player.
-	 */
-	public static void sendEndCredits(@NonNull Player player) {
-		VersionProvider.get().sendEndCredits(player);
-	}
-	
-	/**
 	 * Vanishes a player.
 	 */
 	public static void vanish(@NonNull Player player) {

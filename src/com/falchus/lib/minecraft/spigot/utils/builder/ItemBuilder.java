@@ -145,7 +145,7 @@ public class ItemBuilder {
 					GameProfile gameProfile = new GameProfile(UUID.randomUUID(), null);
 					gameProfile.getProperties().put("textures", new Property("textures", texture));
 					
-					Field gameProfile_profile = ReflectionUtils.getDeclaredField(meta.getClass(), "profile");
+					Field gameProfile_profile = ReflectionUtils.getField(meta.getClass(), "profile");
 					gameProfile_profile.set(meta, gameProfile);
 					
 					item.setItemMeta(meta);

@@ -29,6 +29,7 @@ public interface IVersionAdapter {
 	Class<?> getPlayerInteractManager();
 	Method getEntity_setLocation();
 	Method getEntity_setInvisible();
+	Class<?> getWorld();
 	
 	Object createChatComponentText(@NonNull String text);
 	
@@ -101,11 +102,6 @@ public interface IVersionAdapter {
 	 * Plays a sound to a player.
 	 */
 	void playSound(@NonNull Player player, @NonNull Location location, @NonNull Sound sound, float volume, float pitch);
-	
-	/**
-	 * Sends the end credits screen to a player.
-	 */
-	void sendEndCredits(@NonNull Player player);
 	
 	/**
 	 * @return CraftPlayer from Player

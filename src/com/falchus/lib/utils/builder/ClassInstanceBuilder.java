@@ -2,6 +2,7 @@ package com.falchus.lib.utils.builder;
 
 import java.lang.reflect.Constructor;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.falchus.lib.minecraft.spigot.FalchusLibMinecraftSpigot;
@@ -15,7 +16,8 @@ public class ClassInstanceBuilder {
 
 	private final FalchusLibMinecraftSpigot plugin = FalchusLibMinecraftSpigot.getInstance();
 	private Class<?> clazz;
-	private Object[] args = new Object[0];
+	private Class<?>[] parents = new Class<?>[0];
+	private Object[] children = new Object[0];
 	
 	/**
 	 * Creates a new {@link ClassInstanceBuilder} by class.
@@ -41,12 +43,23 @@ public class ClassInstanceBuilder {
 	}
 	
 	/**
-	 * Sets constructor arguments for the class.
+	 * Sets constructor parameters for the class.
 	 */
-	public ClassInstanceBuilder withArgs(Object... args) {
-        if (args != null) {
-            this.args = args;
-        }
+	@SafeVarargs
+	public final ClassInstanceBuilder withParams(@NonNull Map<Class<?>, Object>... params) {
+		parents = new Class<?>[params.length];
+		children = new Object[params.length];
+		
+		for (int i = 0; i < params.length; i++) {
+			Map<Class<?>, Object> map = params[i];
+			if (map.size() != 1) {
+				throw new IllegalArgumentException("Each map must contain exactly one entry: {Class -> value}");
+			}
+			
+			Map.Entry<Class<?>, Object> entry = map.entrySet().iterator().next();
+			parents[i] = entry.getKey();
+			children[i] = entry.getValue();
+		}
 		return this;
 	}
 	
@@ -59,18 +72,13 @@ public class ClassInstanceBuilder {
 		}
 		
     	try {
-    		Class<?>[] arg = new Class<?>[args.length];
-    		for (int i = 0; i < args.length; i++) {
-    			arg[i] = args[i].getClass();
-    		}
-
     		Constructor<?> ctor = ReflectionUtils.getFirstConstructor(clazz,
 				Set.of(
-					List.of(arg)
+					List.of(parents)
 				)
 			);
     		return ctor.newInstance(
-    			args
+    			children
     		);
     	} catch (Exception e) {
             throw new RuntimeException("Failed to create class instance: " + clazz.getName(), e);

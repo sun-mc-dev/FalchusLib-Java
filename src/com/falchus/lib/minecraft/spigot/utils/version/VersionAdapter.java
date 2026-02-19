@@ -52,6 +52,7 @@ public class VersionAdapter implements IVersionAdapter {
     Class<?> entity;
     @Getter Method entity_setLocation;
     @Getter Method entity_setInvisible;
+    @Getter Class<?> world;
     
     Class<?> chatComponentText;
     
@@ -110,7 +111,7 @@ public class VersionAdapter implements IVersionAdapter {
 		return ReflectionUtils.getMethod(nmsItemStack, "hasTag");
 	}
 	
-	@SneakyThrows private Object enumPlayerInfoAction_REMOVE_PLAYER() {
+	@SneakyThrows private Object enumPlayerInfo$Action_REMOVE_PLAYER() {
 		return ReflectionUtils.getField(enumPlayerInfo$Action, "REMOVE_PLAYER").get(null);
 	}
 	private Class<?> enumTitle$Action() {
@@ -141,6 +142,9 @@ public class VersionAdapter implements IVersionAdapter {
     private Method entity_getId() {
     	return ReflectionUtils.getMethod(entity, "getId");
     }
+    private Class<?> dataWatcher() {
+    	return ReflectionUtils.getClass(packageNms + "DataWatcher");
+    }
     private Method entity_getDataWatcher() {
     	return ReflectionUtils.getMethod(entity, "getDataWatcher");
     }
@@ -159,17 +163,17 @@ public class VersionAdapter implements IVersionAdapter {
     	return ReflectionUtils.getClass(packageNms + "EntityWither");
     }
     private Method scoreboardTeam_setDisplayName() {
-    	return ReflectionUtils.getDeclaredMethod(scoreboardTeam, "setDisplayName",
+    	return ReflectionUtils.getMethod(scoreboardTeam, "setDisplayName",
     		String.class
     	);
     }
     private Method scoreboardTeam_setPrefix() {
-    	return ReflectionUtils.getDeclaredMethod(scoreboardTeam, "setPrefix",
+    	return ReflectionUtils.getMethod(scoreboardTeam, "setPrefix",
     		String.class
     	);
     }
     private Method scoreboardTeam_setSuffix() {
-    	return ReflectionUtils.getDeclaredMethod(scoreboardTeam, "setSuffix",
+    	return ReflectionUtils.getMethod(scoreboardTeam, "setSuffix",
     		String.class
     	);
     }
@@ -214,14 +218,18 @@ public class VersionAdapter implements IVersionAdapter {
             entity_setInvisible = ReflectionUtils.getMethod(entity, "setInvisible",
             	boolean.class
             );
+            world = ReflectionUtils.getFirstClass(
+            	packageNms + "World",
+            	packageNm + "world.level.World"
+            );
     		
             chatComponentText = ReflectionUtils.getFirstClass(
             	packageNms + "ChatComponentText",
             	packageNm + "network.chat.IChatBaseComponent"
             );
             
-            entity_getBukkitEntity = ReflectionUtils.getDeclaredMethod(entity, "getBukkitEntity");
-            entity_setYawPitch = ReflectionUtils.getFirstDeclaredMethod(entity,
+            entity_getBukkitEntity = ReflectionUtils.getMethod(entity, "getBukkitEntity");
+            entity_setYawPitch = ReflectionUtils.getFirstMethod(entity,
             	List.of(
             		float.class,
             		float.class
@@ -306,7 +314,7 @@ public class VersionAdapter implements IVersionAdapter {
             player$Spigot = ReflectionUtils.getClass(packageOb + "entity.Player$Spigot");
             player_spigot = ReflectionUtils.getMethod(Player.class, "spigot");
             entityHuman = entityPlayer.getSuperclass();
-            entityHuman_profile = ReflectionUtils.getFirstDeclaredField(entityHuman,
+            entityHuman_profile = ReflectionUtils.getFirstField(entityHuman,
             	"bH",
             	"gameProfile"
             );
@@ -329,7 +337,7 @@ public class VersionAdapter implements IVersionAdapter {
     			packageNms + "BiomeBase",
     			packageNm + "world.level.biome.BiomeBase"
     		);
-            biomeBase_biomes = ReflectionUtils.getDeclaredField(biomeBase, "biomes");
+            biomeBase_biomes = ReflectionUtils.getField(biomeBase, "biomes");
             biomeBase_getBiome = ReflectionUtils.getMethod(biomeBase, "getBiome",
             	int.class
             );
@@ -343,8 +351,11 @@ public class VersionAdapter implements IVersionAdapter {
 		try {
 			return new ClassInstanceBuilder(
 				chatComponentText
-			).withArgs(
-				text
+			).withParams(
+				Map.of(
+					String.class,
+					text
+				)
 			).build();
 		} catch (Exception e) {
             throw new RuntimeException(e);
@@ -443,9 +454,15 @@ public class VersionAdapter implements IVersionAdapter {
     			Object component = createChatComponentText(title);
     			Object titlePacket = new ClassInstanceBuilder(
     				packageNms + "PacketPlayOutTitle"
-    			).withArgs(
-    				enumTitle$Action_TITLE(),
-    				component
+    			).withParams(
+					Map.of(
+						enumTitle$Action(),
+						enumTitle$Action_TITLE()
+					),
+					Map.of(
+						chatComponentText,
+						component
+					)
     			).build();
     			sendPacket(player, titlePacket);
     		}
@@ -454,9 +471,15 @@ public class VersionAdapter implements IVersionAdapter {
     			Object component = createChatComponentText(subtitle);
     			Object subtitlePacket = new ClassInstanceBuilder(
     				packageNms + "PacketPlayOutTitle"
-    			).withArgs(
-    				enumTitle$Action_SUBTITLE(),
-    				component
+    			).withParams(
+					Map.of(
+						enumTitle$Action(),
+						enumTitle$Action_SUBTITLE()
+					),
+					Map.of(
+						chatComponentText,
+						component
+					)
     			).build();
     			sendPacket(player, subtitlePacket);
     		}
@@ -476,8 +499,11 @@ public class VersionAdapter implements IVersionAdapter {
             
             Object packet = new ClassInstanceBuilder(
             	packageNms + "PacketPlayOutPlayerListHeaderFooter"
-            ).withArgs(
-            	headerComponent
+            ).withParams(
+        		Map.of(
+        			chatComponentText,
+        			headerComponent
+        		)
             ).build();
             
             ReflectionUtils.setField(packet, "b", footerComponent);
@@ -503,8 +529,11 @@ public class VersionAdapter implements IVersionAdapter {
             Object worldServer = getWorldServer(player.getWorld());
             Object wither = new ClassInstanceBuilder(
             	entityWither()
-            ).withArgs(
-            	worldServer
+            ).withParams(
+        		Map.of(
+        			world,
+        			worldServer
+        		)
             ).build();
             
             entity_setInvisible.invoke(wither, true);
@@ -519,17 +548,29 @@ public class VersionAdapter implements IVersionAdapter {
             
             Object spawnPacket = new ClassInstanceBuilder(
             	packageNms + "PacketPlayOutSpawnEntityLiving"
-            ).withArgs(
-            	wither
+            ).withParams(
+        		Map.of(
+        			entityLiving(),
+        			wither
+        		)
             ).build();
             sendPacket(player, spawnPacket);
             
             Object metadataPacket = new ClassInstanceBuilder(
             	packageNms + "PacketPlayOutEntityMetadata"
-            ).withArgs(
-            	entity_getId().invoke(wither),
-            	entity_getDataWatcher().invoke(wither),
-            	true
+            ).withParams(
+        		Map.of(
+        			int.class,
+        			entity_getId().invoke(wither)
+        		),
+				Map.of(
+					dataWatcher(),
+					entity_getDataWatcher().invoke(wither)
+				),
+				Map.of(
+					boolean.class,
+					true
+				)
             ).build();
             sendPacket(player, metadataPacket);
             
@@ -547,8 +588,11 @@ public class VersionAdapter implements IVersionAdapter {
     			int id = (int) entity_getId().invoke(wither);
     			Object destroyPacket = new ClassInstanceBuilder(
     				packageNms + "PacketPlayOutEntityDestroy"
-    			).withArgs(
-    				new int[] { id }
+    			).withParams(
+					Map.of(
+						int[].class,
+						new int[] { id }
+					)
     			).build();
     			sendPacket(player, destroyPacket);
     		}
@@ -563,9 +607,15 @@ public class VersionAdapter implements IVersionAdapter {
 			Object chatMessage = createChatComponentText(message);
 			Object packet = new ClassInstanceBuilder(
 				packageNms + "PacketPlayOutChat"
-			).withArgs(
-				chatMessage,
-				(byte) 2
+			).withParams(
+				Map.of(
+					chatComponentText,
+					chatMessage
+				),
+				Map.of(
+					byte.class,
+					(byte) 2
+				)
 			).build();
 			sendPacket(player, packet);
 		} catch (Exception e) {
@@ -580,9 +630,15 @@ public class VersionAdapter implements IVersionAdapter {
 			
 			Object team = new ClassInstanceBuilder(
 				scoreboardTeam
-			).withArgs(
-				scoreboardINST,
-				player.getName()
+			).withParams(
+				Map.of(
+					scoreboard,
+					scoreboardINST
+				),
+				Map.of(
+					String.class,
+					player.getName()
+				)
 			).build();
 			scoreboardTeam_setDisplayName().invoke(team,
 				createChatComponentText(player.getName())
@@ -596,18 +652,36 @@ public class VersionAdapter implements IVersionAdapter {
 			
 	        Object createPacket = new ClassInstanceBuilder(
 	        	packetPlayOutScoreboardTeam
-	        ).withArgs(
-	        	team,
-	        	players,
-	        	0
+	        ).withParams(
+        		Map.of(
+        			scoreboardTeam,
+        			team
+        		),
+				Map.of(
+					Collection.class,
+					players
+				),
+				Map.of(
+					int.class,
+					0
+				)
 	        ).build();
-	
+
 	        Object updatePacket = new ClassInstanceBuilder(
 	        	packetPlayOutScoreboardTeam
-	        ).withArgs(
-	        	team,
-	        	players,
-	        	2
+	        ).withParams(
+        		Map.of(
+        			scoreboardTeam,
+        			team
+        		),
+				Map.of(
+					Collection.class,
+					players
+				),
+				Map.of(
+					int.class,
+					2
+				)
 	        ).build();
 	        
 	        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
@@ -626,9 +700,15 @@ public class VersionAdapter implements IVersionAdapter {
 			
 			Object team = new ClassInstanceBuilder(
 				scoreboardTeam
-			).withArgs(
-				scoreboardINST,
-				player.getName()
+			).withParams(
+				Map.of(
+					scoreboard,
+					scoreboardINST
+				),
+				Map.of(
+					String.class,
+					player.getName()
+				)
 			).build();
 			scoreboardTeam_setDisplayName().invoke(team,
 				createChatComponentText(player.getName())
@@ -636,10 +716,19 @@ public class VersionAdapter implements IVersionAdapter {
 			
 	        Object removePacket = new ClassInstanceBuilder(
 	        	packetPlayOutScoreboardTeam
-	        ).withArgs(
-	        	team,
-	        	players,
-	        	4
+	        ).withParams(
+	        	Map.of(
+	        		scoreboardTeam,
+	        		team
+	        	),
+	        	Map.of(
+	        		Collection.class,
+	        		players
+	        	),
+	        	Map.of(
+	        		int.class,
+	        		4
+	        	)
 	        ).build();
 			
 	        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
@@ -653,22 +742,6 @@ public class VersionAdapter implements IVersionAdapter {
     @Override
     public void playSound(@NonNull Player player, @NonNull Location location, @NonNull Sound sound, float volume, float pitch) {
     	player.playSound(location, org.bukkit.Sound.valueOf(sound.name()), volume, pitch);
-    }
-    
-    @Override
-    public void sendEndCredits(@NonNull Player player) {
-    	try {
-    		Object packet = new ClassInstanceBuilder(
-    			packageNms + "PacketPlayOutGameStateChange",
-    			packageNm + "network.protocol.game.ClientboundGameEventPacket"
-    		).withArgs(
-    			4,
-    			0.0F
-    		).build();
-    		sendPacket(player, packet);
-    	} catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
     
     @Override
@@ -807,9 +880,15 @@ public class VersionAdapter implements IVersionAdapter {
     		Object packet = new ClassInstanceBuilder(
 				packageNms + "PacketPlayOutPlayerInfo",
 				packageNm + "network.protocol.game.ClientboundPlayerInfoUpdatePacket"
-			).withArgs(
-				update,
-				List.of(entityPlayer)
+			).withParams(
+				Map.of(
+					enumPlayerInfo$Action,
+					update
+				),
+				Map.of(
+					Iterable.class,
+					List.of(entityPlayer)
+				)
 			).build();
     	    for (Player online : Bukkit.getOnlinePlayers()) {
     	        sendPacket(online, packet);
@@ -826,9 +905,15 @@ public class VersionAdapter implements IVersionAdapter {
     		Object packet = new ClassInstanceBuilder(
 				packageNms + "PacketPlayOutPlayerInfo",
 				packageNm + "network.protocol.game.ClientboundPlayerInfoUpdatePacket"
-			).withArgs(
-				add,
-				List.of(entityPlayer)
+			).withParams(
+				Map.of(
+					enumPlayerInfo$Action,
+					add
+				),
+				Map.of(
+					Iterable.class,
+					List.of(entityPlayer)
+				)
 			).build();
             sendPacket(player, packet);
     	} catch (Exception e) {
@@ -839,12 +924,18 @@ public class VersionAdapter implements IVersionAdapter {
     @Override
     public void removeEntityPlayer(@NonNull Player player, @NonNull Object entityPlayer) {
     	try {
-    		Object remove = enumPlayerInfoAction_REMOVE_PLAYER();
+    		Object remove = enumPlayerInfo$Action_REMOVE_PLAYER();
     		Object packet = new ClassInstanceBuilder(
     			packageNms + "PacketPlayOutPlayerInfo"
-    		).withArgs(
-    			remove,
-    			List.of(entityPlayer)
+    		).withParams(
+				Map.of(
+					enumPlayerInfo$Action,
+					remove
+				),
+				Map.of(
+					Iterable.class,
+					List.of(entityPlayer)
+				)
     		).build();
             sendPacket(player, packet);
     	} catch (Exception e) {
@@ -860,16 +951,22 @@ public class VersionAdapter implements IVersionAdapter {
     		Object spawn = new ClassInstanceBuilder(
     			packageNms + "PacketPlayOutNamedEntitySpawn",
     			packageNm + "network.protocol.game.ClientboundAddPlayerPacket"
-    		).withArgs(
-    			entityPlayer
+    		).withParams(
+				Map.of(
+					entityHuman,
+					entityPlayer
+				)
     		).build();
     		sendPacket(player, spawn);
     		
     		Object teleport = new ClassInstanceBuilder(
     			packageNms + "PacketPlayOutEntityTeleport",
     			packageNm + "network.protocol.game.ClientboundPlayerPositionPacket"
-    		).withArgs(
-    			entityPlayer
+    		).withParams(
+				Map.of(
+					entity,
+					entityPlayer
+				)
     		).build();
     		sendPacket(player, teleport);
     		

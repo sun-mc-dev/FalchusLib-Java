@@ -106,7 +106,12 @@ public abstract class PlayerElement {
 		return (T) map.computeIfAbsent(player.getUniqueId(), uuid -> {
 			try {
 				return (T) new ClassInstanceBuilder(clazz)
-						.withArgs(player)
+						.withParams(
+							Map.of(
+								Player.class,
+								player
+							)
+						)
 						.build();
 			} catch (Exception e) {
 				e.printStackTrace();

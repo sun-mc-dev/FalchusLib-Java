@@ -1,5 +1,6 @@
 package com.falchus.lib.minecraft.spigot.utils.builder;
 
+import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -92,17 +93,32 @@ public class EntityPlayerBuilder {
 
 			Object playerInteractManager = new ClassInstanceBuilder(
 				VersionProvider.get().getPlayerInteractManager()
-			).withArgs(
-				world
+			).withParams(
+				Map.of(
+					VersionProvider.get().getWorld(),
+					world
+				)
 			).build();
 
 			Object entityPlayer = new ClassInstanceBuilder(
 				VersionProvider.get().getEntityPlayer()
-			).withArgs(
-				server,
-				world,
-				profile,
-				playerInteractManager
+			).withParams(
+				Map.of(
+					server.getClass(),
+					server
+				),
+				Map.of(
+					world.getClass(),
+					world
+				),
+				Map.of(
+					GameProfile.class,
+					profile
+				),
+				Map.of(
+					VersionProvider.get().getPlayerInteractManager(),
+					playerInteractManager
+				)
 			).build();
 			
 			if (location != null) {
