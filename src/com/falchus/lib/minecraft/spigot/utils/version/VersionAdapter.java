@@ -111,16 +111,19 @@ public class VersionAdapter implements IVersionAdapter {
 		return ReflectionUtils.getMethod(nmsItemStack, "hasTag");
 	}
 	
-	@SneakyThrows private Object enumPlayerInfo$Action_REMOVE_PLAYER() {
+	@SneakyThrows
+	private Object enumPlayerInfo$Action_REMOVE_PLAYER() {
 		return ReflectionUtils.getField(enumPlayerInfo$Action, "REMOVE_PLAYER").get(null);
 	}
 	private Class<?> enumTitle$Action() {
 		return ReflectionUtils.getClass(packageNms + "PacketPlayOutTitle$EnumTitleAction");
 	}
-	@SneakyThrows private Object enumTitle$Action_TITLE() {
+	@SneakyThrows
+	private Object enumTitle$Action_TITLE() {
 		return ReflectionUtils.getField(enumTitle$Action(), "TITLE").get(null);
 	}
-	@SneakyThrows private Object enumTitle$Action_SUBTITLE() {
+	@SneakyThrows
+	private Object enumTitle$Action_SUBTITLE() {
     	return ReflectionUtils.getField(enumTitle$Action(), "SUBTITLE").get(null);
     }
     private Class<?> craftWorld() {
@@ -162,17 +165,17 @@ public class VersionAdapter implements IVersionAdapter {
     private Class<?> entityWither() {
     	return ReflectionUtils.getClass(packageNms + "EntityWither");
     }
-    private Method scoreboardTeam_setDisplayName() {
+    protected Method scoreboardTeam_setDisplayName() {
     	return ReflectionUtils.getMethod(scoreboardTeam, "setDisplayName",
     		String.class
     	);
     }
-    private Method scoreboardTeam_setPrefix() {
+    protected Method scoreboardTeam_setPrefix() {
     	return ReflectionUtils.getMethod(scoreboardTeam, "setPrefix",
     		String.class
     	);
     }
-    private Method scoreboardTeam_setSuffix() {
+    protected Method scoreboardTeam_setSuffix() {
     	return ReflectionUtils.getMethod(scoreboardTeam, "setSuffix",
     		String.class
     	);
@@ -641,13 +644,13 @@ public class VersionAdapter implements IVersionAdapter {
 				)
 			).build();
 			scoreboardTeam_setDisplayName().invoke(team,
-				createChatComponentText(player.getName())
+				player.getName()
 			);
 			scoreboardTeam_setPrefix().invoke(team,
-				createChatComponentText(prefix)
+				prefix
 			);
 			scoreboardTeam_setSuffix().invoke(team,
-				createChatComponentText(suffix)
+				suffix
 			);
 			
 	        Object createPacket = new ClassInstanceBuilder(
@@ -711,7 +714,7 @@ public class VersionAdapter implements IVersionAdapter {
 				)
 			).build();
 			scoreboardTeam_setDisplayName().invoke(team,
-				createChatComponentText(player.getName())
+				player.getName()
 			);
 			
 	        Object removePacket = new ClassInstanceBuilder(

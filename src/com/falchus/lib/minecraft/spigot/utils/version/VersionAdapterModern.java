@@ -13,7 +13,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
 import com.falchus.lib.minecraft.spigot.enums.Sound;
-import com.falchus.lib.minecraft.spigot.utils.version.v1_9_R1.VersionAdapter_v1_9_R1;
+import com.falchus.lib.minecraft.spigot.utils.version.v_1_13_R1.VersionAdapter_v_1_13_R1;
 import com.falchus.lib.utils.ReflectionUtils;
 import com.falchus.lib.utils.builder.ClassInstanceBuilder;
 
@@ -23,7 +23,7 @@ import lombok.SneakyThrows;
 /**
  * Default adapter for all versions over 1.17. (tested with 1.21.11)
  */
-public class VersionAdapterModern extends VersionAdapter_v1_9_R1 {
+public class VersionAdapterModern extends VersionAdapter_v_1_13_R1 {
 	
     private Class<?> itemMeta() {
     	return ReflectionUtils.getClass(packageOb + "inventory.meta.ItemMeta");
@@ -45,7 +45,8 @@ public class VersionAdapterModern extends VersionAdapter_v1_9_R1 {
     private Class<?> persistentDataType() {
     	return ReflectionUtils.getClass(packageOb + "persistence.PersistentDataType");
     }
-    @SneakyThrows private Object persistentDataType_STRING() {
+    @SneakyThrows
+    private Object persistentDataType_STRING() {
     	return ReflectionUtils.getField(persistentDataType(), "STRING").get(null);
     }
     private Class<?> persistentDataContainer() {
@@ -109,13 +110,15 @@ public class VersionAdapterModern extends VersionAdapter_v1_9_R1 {
     private Class<?> barColor() {
     	return ReflectionUtils.getClass(packageOb + "boss.BarColor");
     }
-    @SneakyThrows private Object barColor_WHITE() {
+    @SneakyThrows
+    private Object barColor_WHITE() {
     	return ReflectionUtils.getField(barColor(), "WHITE").get(null);
     }
     private Class<?> barStyle() {
     	return ReflectionUtils.getClass(packageOb + "boss.BarStyle");
     }
-    @SneakyThrows private Object barStyle_SOLID() {
+    @SneakyThrows
+    private Object barStyle_SOLID() {
     	return ReflectionUtils.getField(barStyle(), "SOLID").get(null);
     }
     private Class<?> bossFlag() {
@@ -128,29 +131,6 @@ public class VersionAdapterModern extends VersionAdapter_v1_9_R1 {
     		barColor(),
     		barStyle(),
     		Array.newInstance(bossFlag(), 0).getClass()
-    	);
-    }
-    private Method scoreboardTeam_setDisplayName() {
-    	return ReflectionUtils.getMethod(scoreboardTeam, "setDisplayName",
-			chatComponentText
-    	);
-    }
-    private Method scoreboardTeam_setPrefix() {
-    	return ReflectionUtils.getFirstMethod(scoreboardTeam,
-    		List.of(
-    			chatComponentText
-    		),
-    		"setPrefix",
-    		"setPlayerPrefix"
-    	);
-    }
-    private Method scoreboardTeam_setSuffix() {
-    	return ReflectionUtils.getFirstMethod(scoreboardTeam,
-    		List.of(
-    			chatComponentText
-    		),
-    		"setSuffix",
-    		"setPlayerSuffix"
     	);
     }
     private Method packetPlayOutScoreboardTeam_createAddOrModifyPacket() {

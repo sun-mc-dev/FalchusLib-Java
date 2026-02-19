@@ -3,6 +3,7 @@ package com.falchus.lib.minecraft.spigot.utils.version;
 import org.bukkit.Bukkit;
 
 import com.falchus.lib.minecraft.spigot.utils.version.v1_9_R1.VersionAdapter_v1_9_R1;
+import com.falchus.lib.minecraft.spigot.utils.version.v_1_13_R1.VersionAdapter_v_1_13_R1;
 import com.falchus.lib.utils.builder.ClassInstanceBuilder;
 
 import lombok.experimental.UtilityClass;
@@ -29,6 +30,8 @@ public class VersionProvider {
 		
         if (minor >= 17) {
         	return new VersionAdapterModern();
+        } else if (minor >= 13) {
+        	return new VersionAdapter_v_1_13_R1();
         } else if (minor >= 9) {
         	return new VersionAdapter_v1_9_R1();
         }
