@@ -122,9 +122,17 @@ public class EntityPlayerBuilder {
 			).build();
 			
 			if (location != null) {
-				VersionProvider.get().getEntity_setLocation().invoke(entityPlayer, location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
+				VersionProvider.get().getEntity_setLocation().invoke(entityPlayer,
+					location.getX(),
+					location.getY(),
+					location.getZ(),
+					location.getYaw(),
+					location.getPitch()
+				);
 			}
-			VersionProvider.get().getEntity_setInvisible().invoke(entityPlayer, invisible);
+			VersionProvider.get().getEntity_setInvisible().invoke(entityPlayer,
+				invisible
+			);
 			
 			plugin.getEntityPlayerListener().players.put(uuid, entityPlayer);
 			

@@ -73,6 +73,7 @@ public class VersionAdapter implements IVersionAdapter {
     Field entityPlayer_playerConnection;
     Class<?> playerConnection;
     Method playerConnection_sendPacket;
+    Class<?> iChatBaseComponent;
     Class<?> scoreboardTeam;
     Class<?> scoreboard;
     Object scoreboardINST;
@@ -84,9 +85,9 @@ public class VersionAdapter implements IVersionAdapter {
     Class<?> entityHuman;
     Field entityHuman_profile;
     Field entityPlayer_ping;
-    Class<?> enumPlayerInfo$Action;
-    Object enumPlayerInfo$Action_UPDATE_DISPLAY_NAME;
-    Object enumPlayerInfo$Action_ADD_PLAYER;
+    Class<?> packetPlayOutPlayerInfo$enumPlayerInfoAction;
+    Object packetPlayOutPlayerInfo$enumPlayerInfoAction_UPDATE_DISPLAY_NAME;
+    Object packetPlayOutPlayerInfo$enumPlayerInfoAction_ADD_PLAYER;
 	
     Class<?> craftServer;
     Method craftServer_getServer;
@@ -112,19 +113,19 @@ public class VersionAdapter implements IVersionAdapter {
 	}
 	
 	@SneakyThrows
-	private Object enumPlayerInfo$Action_REMOVE_PLAYER() {
-		return ReflectionUtils.getField(enumPlayerInfo$Action, "REMOVE_PLAYER").get(null);
+	private Object packetPlayOutPlayerInfo$enumPlayerInfoAction_REMOVE_PLAYER() {
+		return ReflectionUtils.getField(packetPlayOutPlayerInfo$enumPlayerInfoAction, "REMOVE_PLAYER").get(null);
 	}
-	private Class<?> enumTitle$Action() {
+	private Class<?> packetPlayOutTitle$enumTitleAction() {
 		return ReflectionUtils.getClass(packageNms + "PacketPlayOutTitle$EnumTitleAction");
 	}
 	@SneakyThrows
-	private Object enumTitle$Action_TITLE() {
-		return ReflectionUtils.getField(enumTitle$Action(), "TITLE").get(null);
+	private Object packetPlayOutTitle$enumTitleAction_TITLE() {
+		return ReflectionUtils.getField(packetPlayOutTitle$enumTitleAction(), "TITLE").get(null);
 	}
 	@SneakyThrows
-	private Object enumTitle$Action_SUBTITLE() {
-    	return ReflectionUtils.getField(enumTitle$Action(), "SUBTITLE").get(null);
+	private Object packetPlayOutTitle$enumTitleAction_SUBTITLE() {
+    	return ReflectionUtils.getField(packetPlayOutTitle$enumTitleAction(), "SUBTITLE").get(null);
     }
     private Class<?> craftWorld() {
     	return ReflectionUtils.getClass(packageObc + "CraftWorld");
@@ -165,20 +166,23 @@ public class VersionAdapter implements IVersionAdapter {
     private Class<?> entityWither() {
     	return ReflectionUtils.getClass(packageNms + "EntityWither");
     }
-    protected Method scoreboardTeam_setDisplayName() {
-    	return ReflectionUtils.getMethod(scoreboardTeam, "setDisplayName",
-    		String.class
-    	);
+    private Field packetPlayOutScoreboardTeam_name() {
+    	return ReflectionUtils.getField(packetPlayOutScoreboardTeam, "a");
     }
-    protected Method scoreboardTeam_setPrefix() {
-    	return ReflectionUtils.getMethod(scoreboardTeam, "setPrefix",
-    		String.class
-    	);
+    private Field packetPlayOutScoreboardTeam_displayName() {
+    	return ReflectionUtils.getField(packetPlayOutScoreboardTeam, "b");
     }
-    protected Method scoreboardTeam_setSuffix() {
-    	return ReflectionUtils.getMethod(scoreboardTeam, "setSuffix",
-    		String.class
-    	);
+    private Field packetPlayOutScoreboardTeam_prefix() {
+    	return ReflectionUtils.getField(packetPlayOutScoreboardTeam, "c");
+    }
+    private Field packetPlayOutScoreboardTeam_suffix() {
+    	return ReflectionUtils.getField(packetPlayOutScoreboardTeam, "d");
+    }
+    private Field packetPlayOutScoreboardTeam_players() {
+    	return ReflectionUtils.getField(packetPlayOutScoreboardTeam, "g");
+    }
+    private Field packetPlayOutScoreboardTeam_mode() {
+    	return ReflectionUtils.getField(packetPlayOutScoreboardTeam, "h");
     }
     
 	public VersionAdapter() {
@@ -228,7 +232,7 @@ public class VersionAdapter implements IVersionAdapter {
     		
             chatComponentText = ReflectionUtils.getFirstClass(
             	packageNms + "ChatComponentText",
-            	packageNm + "network.chat.IChatBaseComponent"
+            	packageNm + "network.chat.ChatComponentText"
             );
             
             entity_getBukkitEntity = ReflectionUtils.getMethod(entity, "getBukkitEntity");
@@ -297,6 +301,10 @@ public class VersionAdapter implements IVersionAdapter {
             	"sendPacket",
             	"send"
             );
+            iChatBaseComponent = ReflectionUtils.getFirstClass(
+            	packageNms + "IChatBaseComponent",
+            	packageNm + "network.chat.IChatBaseComponent"
+            );
             scoreboardTeam = ReflectionUtils.getFirstClass(
             	packageNms + "ScoreboardTeam",
             	packageNm + "world.scores.ScoreboardTeam"
@@ -322,12 +330,12 @@ public class VersionAdapter implements IVersionAdapter {
             	"gameProfile"
             );
             entityPlayer_ping = ReflectionUtils.getField(entityPlayer, "ping");
-            enumPlayerInfo$Action = ReflectionUtils.getFirstClass(
+            packetPlayOutPlayerInfo$enumPlayerInfoAction = ReflectionUtils.getFirstClass(
             	packageNms + "PacketPlayOutPlayerInfo$EnumPlayerInfoAction",
             	packageNm + "network.protocol.game.ClientboundPlayerInfoUpdatePacket$Action"
             );
-            enumPlayerInfo$Action_UPDATE_DISPLAY_NAME = ReflectionUtils.getField(enumPlayerInfo$Action, "UPDATE_DISPLAY_NAME").get(null);
-            enumPlayerInfo$Action_ADD_PLAYER = ReflectionUtils.getField(enumPlayerInfo$Action, "ADD_PLAYER").get(null);
+            packetPlayOutPlayerInfo$enumPlayerInfoAction_UPDATE_DISPLAY_NAME = ReflectionUtils.getField(packetPlayOutPlayerInfo$enumPlayerInfoAction, "UPDATE_DISPLAY_NAME").get(null);
+            packetPlayOutPlayerInfo$enumPlayerInfoAction_ADD_PLAYER = ReflectionUtils.getField(packetPlayOutPlayerInfo$enumPlayerInfoAction, "ADD_PLAYER").get(null);
     		
             craftServer = ReflectionUtils.getClass(packageObc + "CraftServer");
             craftServer_getServer = ReflectionUtils.getMethod(craftServer, "getServer");
@@ -377,7 +385,10 @@ public class VersionAdapter implements IVersionAdapter {
 	@Override
 	public void setYawPitch(@NonNull Object entity, float yaw, float pitch) {
 		try {
-			entity_setYawPitch.invoke(entity, yaw, pitch);
+			entity_setYawPitch.invoke(entity,
+				yaw,
+				pitch
+			);
 		} catch (Exception e) {
 	        throw new RuntimeException(e);
 	    }
@@ -386,19 +397,30 @@ public class VersionAdapter implements IVersionAdapter {
     @Override
     public ItemStack setUUID(@NonNull ItemStack item, UUID uuid) {
     	try {
-    		Object nmsItem = craftItemStack_asNMSCopy.invoke(null, item);
+    		Object nmsItem = craftItemStack_asNMSCopy.invoke(null,
+    			item
+    		);
     		if (nmsItem == null) return item;
     		
     		Object tag = (boolean) nmsItemStack_hasTag().invoke(nmsItem)
     				? nmsItemStack_getTag().invoke(nmsItem)
     				: nbtTagCompound.getConstructor().newInstance();
     		if (uuid == null) {
-    			nbtTagCompound_remove.invoke(tag, "UUID");
+    			nbtTagCompound_remove.invoke(tag,
+    				"UUID"
+    				);
     		} else {
-    			nbtTagCompound_setString.invoke(tag, "UUID", uuid.toString());
+    			nbtTagCompound_setString.invoke(tag,
+    				"UUID",
+    				uuid.toString()
+    			);
     		}
-            nmsItemStack_setTag().invoke(nmsItem, tag);
-            return (ItemStack) craftItemStack_asBukkitCopy.invoke(null, nmsItem);
+            nmsItemStack_setTag().invoke(nmsItem,
+            	tag
+            );
+            return (ItemStack) craftItemStack_asBukkitCopy.invoke(null,
+            	nmsItem
+            );
     	} catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -407,13 +429,19 @@ public class VersionAdapter implements IVersionAdapter {
     @Override
     public UUID getUUID(@NonNull ItemStack item) {
     	try {
-    		Object nmsItem = craftItemStack_asNMSCopy.invoke(null, item);
+    		Object nmsItem = craftItemStack_asNMSCopy.invoke(null,
+    			item
+    		);
     		if (nmsItem == null) return null;
     		
     		if ((boolean) nmsItemStack_hasTag().invoke(nmsItem)) {
     			Object tag = nmsItemStack_getTag().invoke(nmsItem);
-    			if ((boolean) nbtTagCompound_hasKey.invoke(tag, "UUID")) {
-    				return UUID.fromString((String) nbtTagCompound_getString.invoke(tag, "UUID"));
+    			if ((boolean) nbtTagCompound_hasKey.invoke(tag,
+    				"UUID"
+    			)) {
+    				return UUID.fromString((String) nbtTagCompound_getString.invoke(tag,
+    					"UUID"
+    				));
     			}
     		}
     		return null;
@@ -425,15 +453,21 @@ public class VersionAdapter implements IVersionAdapter {
     @Override
     public ItemStack clearNBT(@NonNull ItemStack item) {
     	try {
-    		Object nmsItem = craftItemStack_asNMSCopy.invoke(null, item);
+    		Object nmsItem = craftItemStack_asNMSCopy.invoke(null,
+    			item
+    		);
     		if (nmsItem == null) return item;
     		
     		Object tag = new ClassInstanceBuilder(
     			nbtTagCompound
     		).build();
-    		nmsItemStack_setTag().invoke(nmsItem, tag);
+    		nmsItemStack_setTag().invoke(nmsItem,
+    			tag
+    		);
     		
-    		return (ItemStack) craftItemStack_asBukkitCopy.invoke(null, nmsItem);
+    		return (ItemStack) craftItemStack_asBukkitCopy.invoke(null,
+    			nmsItem
+    		);
     	} catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -444,7 +478,9 @@ public class VersionAdapter implements IVersionAdapter {
     	try {
     		Object entityPlayer = getEntityPlayer(player);
     		Object connection = entityPlayer_playerConnection.get(entityPlayer);
-    		playerConnection_sendPacket.invoke(connection, packet);
+    		playerConnection_sendPacket.invoke(connection,
+    			packet
+    		);
     	} catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -459,11 +495,11 @@ public class VersionAdapter implements IVersionAdapter {
     				packageNms + "PacketPlayOutTitle"
     			).withParams(
 					Map.of(
-						enumTitle$Action(),
-						enumTitle$Action_TITLE()
+						packetPlayOutTitle$enumTitleAction(),
+						packetPlayOutTitle$enumTitleAction_TITLE()
 					),
 					Map.of(
-						chatComponentText,
+						iChatBaseComponent,
 						component
 					)
     			).build();
@@ -476,11 +512,11 @@ public class VersionAdapter implements IVersionAdapter {
     				packageNms + "PacketPlayOutTitle"
     			).withParams(
 					Map.of(
-						enumTitle$Action(),
-						enumTitle$Action_SUBTITLE()
+						packetPlayOutTitle$enumTitleAction(),
+						packetPlayOutTitle$enumTitleAction_SUBTITLE()
 					),
 					Map.of(
-						chatComponentText,
+						iChatBaseComponent,
 						component
 					)
     			).build();
@@ -504,7 +540,7 @@ public class VersionAdapter implements IVersionAdapter {
             	packageNms + "PacketPlayOutPlayerListHeaderFooter"
             ).withParams(
         		Map.of(
-        			chatComponentText,
+    				iChatBaseComponent,
         			headerComponent
         		)
             ).build();
@@ -539,15 +575,29 @@ public class VersionAdapter implements IVersionAdapter {
         		)
             ).build();
             
-            entity_setInvisible.invoke(wither, true);
-            entity_setCustomName().invoke(wither, title);
-            entity_setCustomNameVisible().invoke(wither, true);
+            entity_setInvisible.invoke(wither,
+            	true
+            );
+            entity_setCustomName().invoke(wither,
+            	title
+            );
+            entity_setCustomNameVisible().invoke(wither,
+            	true
+            );
             
             float maxHealth = (float) entityLiving_getMaxHealth().invoke(wither);
             float newHealth = (float) Math.max(1, Math.min(maxHealth, progress * maxHealth));
-            entityLiving_setHealth().invoke(wither, newHealth);
+            entityLiving_setHealth().invoke(wither,
+            	newHealth
+            );
             
-            entity_setLocation.invoke(wither, location.getX(), location.getY(), location.getZ(), yaw, pitch);
+            entity_setLocation.invoke(wither,
+            	location.getX(),
+            	location.getY(),
+            	location.getZ(),
+            	yaw,
+            	pitch
+            );
             
             Object spawnPacket = new ClassInstanceBuilder(
             	packageNms + "PacketPlayOutSpawnEntityLiving"
@@ -612,7 +662,7 @@ public class VersionAdapter implements IVersionAdapter {
 				packageNms + "PacketPlayOutChat"
 			).withParams(
 				Map.of(
-					chatComponentText,
+					iChatBaseComponent,
 					chatMessage
 				),
 				Map.of(
@@ -631,61 +681,27 @@ public class VersionAdapter implements IVersionAdapter {
 		try {
 			Set<String> players = Set.of(player.getName());
 			
-			Object team = new ClassInstanceBuilder(
-				scoreboardTeam
-			).withParams(
-				Map.of(
-					scoreboard,
-					scoreboardINST
-				),
-				Map.of(
-					String.class,
-					player.getName()
-				)
-			).build();
-			scoreboardTeam_setDisplayName().invoke(team,
-				player.getName()
-			);
-			scoreboardTeam_setPrefix().invoke(team,
-				prefix
-			);
-			scoreboardTeam_setSuffix().invoke(team,
-				suffix
-			);
-			
 	        Object createPacket = new ClassInstanceBuilder(
 	        	packetPlayOutScoreboardTeam
-	        ).withParams(
-        		Map.of(
-        			scoreboardTeam,
-        			team
-        		),
-				Map.of(
-					Collection.class,
-					players
-				),
-				Map.of(
-					int.class,
-					0
-				)
 	        ).build();
-
+	        ReflectionUtils.setField(createPacket, packetPlayOutScoreboardTeam_name(), player.getName());	        
+	        ReflectionUtils.setField(createPacket, packetPlayOutScoreboardTeam_displayName(), player.getName());
+	        ReflectionUtils.setField(createPacket, packetPlayOutScoreboardTeam_players(), players);
+	        ReflectionUtils.setField(createPacket, packetPlayOutScoreboardTeam_mode(), 0);
+	        
 	        Object updatePacket = new ClassInstanceBuilder(
 	        	packetPlayOutScoreboardTeam
-	        ).withParams(
-        		Map.of(
-        			scoreboardTeam,
-        			team
-        		),
-				Map.of(
-					Collection.class,
-					players
-				),
-				Map.of(
-					int.class,
-					2
-				)
 	        ).build();
+	        ReflectionUtils.setField(updatePacket, packetPlayOutScoreboardTeam_name(), player.getName());	        
+	        ReflectionUtils.setField(updatePacket, packetPlayOutScoreboardTeam_displayName(), player.getName());
+	        ReflectionUtils.setField(updatePacket, packetPlayOutScoreboardTeam_players(), players);
+	        ReflectionUtils.setField(updatePacket, packetPlayOutScoreboardTeam_mode(), 2);
+	        
+	        ReflectionUtils.setField(createPacket, packetPlayOutScoreboardTeam_prefix(), prefix);
+	        ReflectionUtils.setField(updatePacket, packetPlayOutScoreboardTeam_prefix(), prefix);
+	        
+	        ReflectionUtils.setField(createPacket, packetPlayOutScoreboardTeam_suffix(), suffix);
+	        ReflectionUtils.setField(updatePacket, packetPlayOutScoreboardTeam_suffix(), suffix);
 	        
 	        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
 	        	sendPacket(onlinePlayer, createPacket);
@@ -701,38 +717,12 @@ public class VersionAdapter implements IVersionAdapter {
 		try {
 			Set<String> players = Set.of(player.getName());
 			
-			Object team = new ClassInstanceBuilder(
-				scoreboardTeam
-			).withParams(
-				Map.of(
-					scoreboard,
-					scoreboardINST
-				),
-				Map.of(
-					String.class,
-					player.getName()
-				)
-			).build();
-			scoreboardTeam_setDisplayName().invoke(team,
-				player.getName()
-			);
-			
 	        Object removePacket = new ClassInstanceBuilder(
 	        	packetPlayOutScoreboardTeam
-	        ).withParams(
-	        	Map.of(
-	        		scoreboardTeam,
-	        		team
-	        	),
-	        	Map.of(
-	        		Collection.class,
-	        		players
-	        	),
-	        	Map.of(
-	        		int.class,
-	        		4
-	        	)
 	        ).build();
+	        ReflectionUtils.setField(removePacket, packetPlayOutScoreboardTeam_name(), player.getName());
+	        ReflectionUtils.setField(removePacket, packetPlayOutScoreboardTeam_players(), players);
+	        ReflectionUtils.setField(removePacket, packetPlayOutScoreboardTeam_mode(), 4);
 			
 	        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
 	        	sendPacket(onlinePlayer, removePacket);
@@ -879,13 +869,13 @@ public class VersionAdapter implements IVersionAdapter {
     	try {
     		Object entityPlayer = getEntityPlayer(player);
     		
-    		Object update = enumPlayerInfo$Action_UPDATE_DISPLAY_NAME;
+    		Object update = packetPlayOutPlayerInfo$enumPlayerInfoAction_UPDATE_DISPLAY_NAME;
     		Object packet = new ClassInstanceBuilder(
 				packageNms + "PacketPlayOutPlayerInfo",
 				packageNm + "network.protocol.game.ClientboundPlayerInfoUpdatePacket"
 			).withParams(
 				Map.of(
-					enumPlayerInfo$Action,
+					packetPlayOutPlayerInfo$enumPlayerInfoAction,
 					update
 				),
 				Map.of(
@@ -904,13 +894,13 @@ public class VersionAdapter implements IVersionAdapter {
     @Override
     public void addEntityPlayer(@NonNull Player player, @NonNull Object entityPlayer) {
     	try {
-    		Object add = enumPlayerInfo$Action_ADD_PLAYER;
+    		Object add = packetPlayOutPlayerInfo$enumPlayerInfoAction_ADD_PLAYER;
     		Object packet = new ClassInstanceBuilder(
 				packageNms + "PacketPlayOutPlayerInfo",
 				packageNm + "network.protocol.game.ClientboundPlayerInfoUpdatePacket"
 			).withParams(
 				Map.of(
-					enumPlayerInfo$Action,
+					packetPlayOutPlayerInfo$enumPlayerInfoAction,
 					add
 				),
 				Map.of(
@@ -927,12 +917,12 @@ public class VersionAdapter implements IVersionAdapter {
     @Override
     public void removeEntityPlayer(@NonNull Player player, @NonNull Object entityPlayer) {
     	try {
-    		Object remove = enumPlayerInfo$Action_REMOVE_PLAYER();
+    		Object remove = packetPlayOutPlayerInfo$enumPlayerInfoAction_REMOVE_PLAYER();
     		Object packet = new ClassInstanceBuilder(
     			packageNms + "PacketPlayOutPlayerInfo"
     		).withParams(
 				Map.of(
-					enumPlayerInfo$Action,
+					packetPlayOutPlayerInfo$enumPlayerInfoAction,
 					remove
 				),
 				Map.of(
@@ -1167,7 +1157,9 @@ public class VersionAdapter implements IVersionAdapter {
 	    			default: id = 1; break;
     			}
     		}
-    		return biomeBase_getBiome.invoke(null, id);
+    		return biomeBase_getBiome.invoke(null,
+    			id
+    		);
     	} catch (Exception e) {
     		throw new RuntimeException(e);
 		}

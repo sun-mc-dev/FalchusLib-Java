@@ -80,15 +80,6 @@ public class VersionAdapterModern extends VersionAdapter_v_1_13_R1 {
     		String.class
     	);
     }
-	private Class<?> clientboundSetTitleTextPacket() {
-		return ReflectionUtils.getClass(packageNm + "network.protocol.game.ClientboundSetTitleTextPacket");
-	}
-    private Class<?> clientboundSetSubtitleTextPacket() {
-    	return ReflectionUtils.getClass(packageNm + "network.protocol.game.ClientboundSetSubtitleTextPacket");
-    }
-    private Class<?> clientboundPlayerListHeaderFooter() {
-    	return ReflectionUtils.getClass(packageNm + "network.protocol.game.ClientboundTabListPacket");
-    }
     private Class<?> bossBar() {
     	return ReflectionUtils.getClass(packageOb + "boss.BossBar");
     }
@@ -148,7 +139,9 @@ public class VersionAdapterModern extends VersionAdapter_v_1_13_R1 {
 	@Override
 	public Object createChatComponentText(@NonNull String text) {
 		try {
-			return chatComponentText_literal().invoke(null, text);
+			return chatComponentText_literal().invoke(null,
+				text
+			);
 		} catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -175,11 +168,19 @@ public class VersionAdapterModern extends VersionAdapter_v_1_13_R1 {
             ).build();
     		
     		if (uuid == null) {
-                persistentDataContainer_remove().invoke(pdc, key);
+                persistentDataContainer_remove().invoke(pdc,
+                	key
+                );
     		} else {
-                persistentDataContainer_set().invoke(pdc, key, persistentDataType_STRING(), uuid.toString());
+                persistentDataContainer_set().invoke(pdc,
+                	key,
+                	persistentDataType_STRING(),
+                	uuid.toString()
+                );
     		}
-            itemStack_setItemMeta().invoke(item, meta);
+            itemStack_setItemMeta().invoke(item,
+            	meta
+            );
             return item;
     	} catch (Exception e) {
             throw new RuntimeException(e);
@@ -205,7 +206,10 @@ public class VersionAdapterModern extends VersionAdapter_v_1_13_R1 {
             		"UUID"
             	)
             ).build();
-            Object uuid = persistentDataContainer_get().invoke(pdc, key, persistentDataType_STRING());
+            Object uuid = persistentDataContainer_get().invoke(pdc,
+            	key,
+            	persistentDataType_STRING()
+            );
             
             return uuid != null ? UUID.fromString((String) uuid) : null;
     	} catch (Exception e) {
@@ -232,72 +236,14 @@ public class VersionAdapterModern extends VersionAdapter_v_1_13_R1 {
             		"UUID"
             	)
             ).build();
-            persistentDataContainer_remove().invoke(pdc, key);
+            persistentDataContainer_remove().invoke(pdc,
+            	key
+            );
     		
-            itemStack_setItemMeta().invoke(item, meta);
+            itemStack_setItemMeta().invoke(item,
+            	meta
+            );
             return item;
-    	} catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-	@Override
-	public void sendTitle(@NonNull Player player, String title, String subtitle) {
-		try {
-			if (title != null && !title.isEmpty()) {
-				Object component = createChatComponentText(title);
-	            Object packet = new ClassInstanceBuilder(
-            		clientboundSetTitleTextPacket()
-                ).withParams(
-            		Map.of(
-            			chatComponentText,
-            			component
-            		)
-                ).build();
-				sendPacket(player, packet);
-			}
-			
-            if (subtitle != null && !subtitle.isEmpty()) {
-				Object component = createChatComponentText(subtitle);
-	            Object packet = new ClassInstanceBuilder(
-            		clientboundSetSubtitleTextPacket()
-                ).withParams(
-            		Map.of(
-            			chatComponentText,
-            			component
-            		)
-                ).build();
-				sendPacket(player, packet);
-            }
-		} catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-	}
-	
-    @Override
-    public void sendTablist(@NonNull Player player, List<String> header, List<String> footer, String name) {
-    	try {
-    	    String headerText = header != null ? String.join("\n", header) : "";
-    	    String footerText = footer != null ? String.join("\n", footer) : "";
-    	    
-            Object headerComponent = createChatComponentText(headerText);
-            Object footerComponent = createChatComponentText(footerText);
-            
-            Object packet = new ClassInstanceBuilder(
-        		clientboundPlayerListHeaderFooter()
-            ).withParams(
-        		Map.of(
-        			chatComponentText,
-        			headerComponent
-        		),
-        		Map.of(
-        			chatComponentText,
-        			footerComponent
-        		)
-            ).build();
-            
-            sendPacket(player, packet);
-            player.setPlayerListName(name);
     	} catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -321,8 +267,7 @@ public class VersionAdapterModern extends VersionAdapter_v_1_13_R1 {
 				)
             ).build();
     		
-    		Object bossBar = bukkitServer_createBossBar().invoke(
-    			getBukkitServer(),
+    		Object bossBar = bukkitServer_createBossBar().invoke(getBukkitServer(),
     			key,
     			title,
     			barColor_WHITE(),
@@ -330,8 +275,12 @@ public class VersionAdapterModern extends VersionAdapter_v_1_13_R1 {
     			Array.newInstance(bossFlag(), 0)
     		);
     		
-    		bossBar_setProgress().invoke(bossBar, progress);
-    		bossBar_addPlayer().invoke(bossBar, player);
+    		bossBar_setProgress().invoke(bossBar,
+    			progress
+    		);
+    		bossBar_addPlayer().invoke(bossBar,
+    			player
+    		);
     		
     		bossBars.put(player, key);
     	} catch (Exception e) {
@@ -345,7 +294,9 @@ public class VersionAdapterModern extends VersionAdapter_v_1_13_R1 {
     		Object key = bossBars.remove(player);
     		if (key == null) return;
     		
-    		bossBar_removeBossBar().invoke(getBukkitServer(), key);
+    		bossBar_removeBossBar().invoke(getBukkitServer(),
+    			key
+    		);
     	} catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -376,11 +327,10 @@ public class VersionAdapterModern extends VersionAdapter_v_1_13_R1 {
 				createChatComponentText(suffix)
 			);
 			
-			Object createPacket = packetPlayOutScoreboardTeam_createAddOrModifyPacket()
-				.invoke(null,
-					team,
-					false
-				);
+			Object createPacket = packetPlayOutScoreboardTeam_createAddOrModifyPacket().invoke(null,
+				team,
+				false
+			);
 	        
 	        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
 	        	sendPacket(onlinePlayer, createPacket);
@@ -409,10 +359,9 @@ public class VersionAdapterModern extends VersionAdapter_v_1_13_R1 {
 				createChatComponentText(player.getName())
 			);
 			
-			Object removePacket = packetPlayOutScoreboardTeam_createRemovePacket()
-				.invoke(null,
-					team
-				);
+			Object removePacket = packetPlayOutScoreboardTeam_createRemovePacket().invoke(null,
+				team
+			);
 			
 			for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
 				sendPacket(onlinePlayer, removePacket);

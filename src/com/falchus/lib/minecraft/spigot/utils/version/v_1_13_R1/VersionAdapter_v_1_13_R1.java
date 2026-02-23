@@ -17,31 +17,50 @@ import lombok.NonNull;
 
 public class VersionAdapter_v_1_13_R1 extends VersionAdapter {
 
-	@Override
+	private Method player_setPlayerListHeaderFooter() {
+		return ReflectionUtils.getMethod(Player.class, "setPlayerListHeaderFooter",
+			String.class,
+			String.class
+		);
+	}
 	protected Method scoreboardTeam_setDisplayName() {
     	return ReflectionUtils.getMethod(scoreboardTeam, "setDisplayName",
-			chatComponentText
+			iChatBaseComponent
     	);
     }
-	@Override
 	protected Method scoreboardTeam_setPrefix() {
     	return ReflectionUtils.getFirstMethod(scoreboardTeam,
     		List.of(
-    			chatComponentText
+				iChatBaseComponent
     		),
     		"setPrefix",
     		"setPlayerPrefix"
     	);
     }
-	@Override
 	protected Method scoreboardTeam_setSuffix() {
     	return ReflectionUtils.getFirstMethod(scoreboardTeam,
     		List.of(
-    			chatComponentText
+				iChatBaseComponent
     		),
     		"setSuffix",
     		"setPlayerSuffix"
     	);
+    }
+	
+    @Override
+    public void sendTablist(@NonNull Player player, List<String> header, List<String> footer, String name) {
+    	try {
+    	    String headerText = header != null ? String.join("\n", header) : "";
+    	    String footerText = footer != null ? String.join("\n", footer) : "";
+            
+            player_setPlayerListHeaderFooter().invoke(player,
+            	headerText,
+            	footerText
+            );
+            player.setPlayerListName(name);
+    	} catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 	
     @Override
