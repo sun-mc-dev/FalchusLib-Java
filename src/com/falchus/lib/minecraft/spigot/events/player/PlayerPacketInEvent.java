@@ -2,6 +2,8 @@ package com.falchus.lib.minecraft.spigot.events.player;
 
 import org.bukkit.entity.Player;
 
+import com.falchus.lib.minecraft.spigot.packets.wrapper.PacketWrapper;
+
 import lombok.Getter;
 
 /**
@@ -10,7 +12,7 @@ import lombok.Getter;
 @Getter
 public class PlayerPacketInEvent extends PlayerPacketEvent {
 	
-	public PlayerPacketInEvent(boolean async, Player player, Object packet) {
+	public PlayerPacketInEvent(boolean async, Player player, PacketWrapper packet) {
 		super(async, player, packet);
 	}
 }

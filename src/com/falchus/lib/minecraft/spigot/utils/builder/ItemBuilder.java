@@ -18,7 +18,7 @@ import com.falchus.lib.interfaces.consumer.TriConsumer;
 import com.falchus.lib.minecraft.spigot.utils.ItemUtils;
 import com.falchus.lib.minecraft.spigot.utils.ServerUtils;
 import com.falchus.lib.minecraft.spigot.utils.WorldUtils;
-import com.falchus.lib.utils.ReflectionUtils;
+import com.falchus.lib.utils.reflection.ReflectionUtils;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 

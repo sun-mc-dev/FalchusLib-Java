@@ -1,0 +1,76 @@
+package com.falchus.lib.minecraft.spigot.packets.wrapper;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+
+import com.falchus.lib.minecraft.spigot.packets.wrapper.chat.*;
+import com.falchus.lib.minecraft.spigot.utils.version.IVersionAdapter;
+import com.falchus.lib.minecraft.spigot.utils.version.VersionProvider;
+import com.falchus.lib.utils.reflection.Dummy;
+import com.falchus.lib.utils.reflection.ReflectionUtils;
+import com.falchus.lib.utils.wrapper.impl.FirstClassWrapper;
+
+import lombok.NonNull;
+
+public class PacketWrapper extends FirstClassWrapper<Object> {
+	
+	protected static final IVersionAdapter version = VersionProvider.get();
+	protected static final String packageNetwork = version.getPackageNm() + "network.protocol.game.";
+
+	private static final Map<Class<?>, Function<Object, PacketWrapper>> registry = new HashMap<>();
+	
+	public PacketWrapper(@NonNull Object handle, @NonNull Set<String> names) {
+		super(handle, names);
+	}
+	
+	@SuppressWarnings("unchecked")
+	private static <T extends PacketWrapper> void register() {
+		if (!registry.isEmpty()) return;
+		Class<T>[] wrappers = new Class[] {
+			WrappedPacketInChat.class,
+			WrappedPacketOutChat.class
+		};
+		
+		for (Class<T> wrapper : wrappers) {
+			try {
+				PacketWrapper dummy = (T) ReflectionUtils.getConstructor(wrapper, Object.class).newInstance(Dummy.instance);
+				for (Class<?> clazz : dummy.getClasses()) {
+					registry.put(clazz, obj -> {
+						try {
+							return (T) ReflectionUtils.getConstructor(wrapper, Object.class).newInstance(obj);
+						} catch (Exception e) {
+							throw new RuntimeException(e);
+						}
+					});
+				}
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+		}
+	}
+	
+	public static PacketWrapper wrap(Object packet) {
+		register();
+		
+		Function<Object, PacketWrapper> wrapper = registry.get(packet.getClass());
+		if (wrapper != null) {
+			return wrapper.apply(packet);
+		}
+		return new PacketWrapper(packet, Set.of(packet.getClass().getName()));
+	}
+	
+	@SuppressWarnings("unchecked")
+	public <T extends PacketWrapper> T as(@NonNull Class<T> clazz) {
+		if (clazz.isInstance(this)) {
+			return (T) this;
+		}
+		
+		try {
+			return (T) ReflectionUtils.getConstructor(clazz, Object.class).newInstance(handle);
+		} catch (Exception e) {
+			return null;
+		}
+	}
+}

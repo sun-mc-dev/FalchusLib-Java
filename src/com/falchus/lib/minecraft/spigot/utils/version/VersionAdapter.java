@@ -21,8 +21,8 @@ import com.falchus.lib.minecraft.spigot.FalchusLibMinecraftSpigot;
 import com.falchus.lib.minecraft.spigot.enums.Sound;
 import com.falchus.lib.minecraft.spigot.utils.PlayerUtils;
 import com.falchus.lib.minecraft.spigot.utils.builder.GameProfileBuilder;
-import com.falchus.lib.utils.ReflectionUtils;
 import com.falchus.lib.utils.builder.ClassInstanceBuilder;
+import com.falchus.lib.utils.reflection.ReflectionUtils;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 

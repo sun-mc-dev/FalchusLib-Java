@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.falchus.lib.minecraft.spigot.FalchusLibMinecraftSpigot;
-import com.falchus.lib.utils.ReflectionUtils;
+import com.falchus.lib.utils.reflection.ReflectionUtils;
 
 import lombok.Getter;
 import lombok.NonNull;

@@ -5,6 +5,8 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
+import com.falchus.lib.minecraft.spigot.packets.wrapper.PacketWrapper;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,9 +20,9 @@ public class PlayerPacketEvent extends Event implements Cancellable {
 	@Setter private boolean cancelled;
 	
 	private final Player player;
-	private final Object packet;
+	private final PacketWrapper packet;
 	
-	public PlayerPacketEvent(boolean async, Player player, Object packet) {
+	public PlayerPacketEvent(boolean async, Player player, PacketWrapper packet) {
 		super(async);
 		this.player = player;
 		this.packet = packet;

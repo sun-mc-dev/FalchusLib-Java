@@ -10,8 +10,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import com.falchus.lib.minecraft.spigot.utils.version.VersionAdapter;
-import com.falchus.lib.utils.ReflectionUtils;
 import com.falchus.lib.utils.builder.ClassInstanceBuilder;
+import com.falchus.lib.utils.reflection.ReflectionUtils;
 
 import lombok.NonNull;
 

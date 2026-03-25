@@ -14,8 +14,8 @@ import org.bukkit.plugin.Plugin;
 
 import com.falchus.lib.minecraft.spigot.enums.Sound;
 import com.falchus.lib.minecraft.spigot.utils.version.v_1_13_R1.VersionAdapter_v_1_13_R1;
-import com.falchus.lib.utils.ReflectionUtils;
 import com.falchus.lib.utils.builder.ClassInstanceBuilder;
+import com.falchus.lib.utils.reflection.ReflectionUtils;
 
 import lombok.NonNull;
 import lombok.SneakyThrows;

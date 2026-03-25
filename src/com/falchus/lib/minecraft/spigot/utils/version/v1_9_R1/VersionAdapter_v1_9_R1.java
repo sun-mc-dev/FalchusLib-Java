@@ -5,7 +5,7 @@ import java.lang.reflect.Method;
 import org.bukkit.entity.Player;
 
 import com.falchus.lib.minecraft.spigot.utils.version.VersionAdapter;
-import com.falchus.lib.utils.ReflectionUtils;
+import com.falchus.lib.utils.reflection.ReflectionUtils;
 
 import lombok.NonNull;
 import net.md_5.bungee.api.ChatMessageType;
