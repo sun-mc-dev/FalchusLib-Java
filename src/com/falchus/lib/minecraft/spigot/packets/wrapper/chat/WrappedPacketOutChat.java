@@ -15,4 +15,9 @@ public class WrappedPacketOutChat extends PacketChatWrapper {
 			)
 		);
 	}
+	
+	@Override
+	public void setMessage(String message) {
+		setField(this.message, version.createChatComponentText(message));
+	}
 }

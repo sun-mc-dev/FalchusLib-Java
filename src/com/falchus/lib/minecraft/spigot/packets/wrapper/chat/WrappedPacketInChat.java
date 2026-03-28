@@ -15,6 +15,11 @@ public class WrappedPacketInChat extends PacketChatWrapper {
 	}
 	
 	@Override
+	public void setMessage(String message) {
+		setField(this.message, message);
+	}
+	
+	@Override
 	public String getMessage() {
 		return (String) super.getMessage();
 	}

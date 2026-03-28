@@ -7,9 +7,9 @@ import com.falchus.lib.minecraft.spigot.packets.wrapper.PacketWrapper;
 
 import lombok.NonNull;
 
-class PacketChatWrapper extends PacketWrapper {
+abstract class PacketChatWrapper extends PacketWrapper {
 	
-	private final Field message;
+	final Field message;
 
 	PacketChatWrapper(@NonNull Object handle, @NonNull Set<String> names) {
 		super(handle, names);
@@ -22,9 +22,7 @@ class PacketChatWrapper extends PacketWrapper {
 		);
 	}
 	
-	public void setMessage(String message) {
-		setField(this.message, version.createChatComponentText(message));
-	}
+	public abstract void setMessage(String message);
 	
 	/**
 	 * In:	String
