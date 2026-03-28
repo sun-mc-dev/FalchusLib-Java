@@ -4,6 +4,6 @@
   "version": "${project.version}",
   "main": "com.falchus.lib.minecraft.velocity.FalchusLibMinecraftVelocity",
   "authors": ["Falchus", "Kalibrier"],
-  "description": "A simple library.",
+  "description": "A library designed to simplify & speed up software development.",
   "url": "https://lib-java.falchus.com"
 }

@@ -21,7 +21,7 @@ import lombok.experimental.FieldDefaults;
 @Plugin(id = "falchuslib",
 		name = "FalchusLib",
 //		version = "0.0.0",
-		description = "A simple library.",
+		description = "A library designed to simplify & speed up software development.",
 		authors = {"Falchus"},
 		url = "https://lib-java.falchus.com")
 @Getter

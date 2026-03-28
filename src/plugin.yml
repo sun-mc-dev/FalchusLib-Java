@@ -1,7 +1,7 @@
 name: FalchusLib
 version: ${project.version}
 api-version: 1.13
-description: A simple library.
+description: A library designed to simplify & speed up software development.
 main: com.falchus.lib.minecraft.spigot.FalchusLibMinecraftSpigot
 author: Falchus
 authors: [Kalibrier]
