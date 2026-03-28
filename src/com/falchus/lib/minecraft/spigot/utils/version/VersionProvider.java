@@ -21,20 +21,32 @@ public class VersionProvider {
 		String bukkitVersion = Bukkit.getBukkitVersion();
 		String mc = bukkitVersion.split("-")[0];
 		
+		int major;
 		int minor;
 		try {
-            minor = Integer.parseInt(mc.split("\\.")[1]);
+			String[] parts = mc.split("\\.");
+			major = Integer.parseInt(parts[0]);
+            minor = parts.length > 1 ? Integer.parseInt(parts[1]) : 0;
 		} catch (Exception e) {
             return new VersionAdapter();
         }
 		
-        if (minor >= 17) {
-        	return new VersionAdapterModern();
-        } else if (minor >= 13) {
-        	return new VersionAdapter_v_1_13_R1();
-        } else if (minor >= 9) {
-        	return new VersionAdapter_v1_9_R1();
-        }
+    	switch (major) {
+    		case 1:
+    			if (minor >= 17) {
+    	        	return new VersionAdapterModern();
+    			} else if (minor >= 13) {
+    				return new VersionAdapter_v_1_13_R1();
+    			} else if (minor >= 9) {
+    				return new VersionAdapter_v1_9_R1();
+    			}
+    			break;
+    		case 2:
+    			return new VersionAdapterModern();
+
+			default:
+				break;
+    	}
 		
         String packageName = Bukkit.getServer().getClass().getPackageName();
         String[] parts = packageName.split("\\.");
