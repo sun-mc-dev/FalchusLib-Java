@@ -24,7 +24,6 @@ public class FalchusLibMinecraftSpigot extends JavaPlugin {
 	ItemListener itemListener;
 	JoinQuitListener joinQuitListener;
 	LobbyCancelListener lobbyCancelListener;
-	VanishListener vanishListener;
 	ClientManager clientManager;
 	
 	@Override
@@ -41,7 +40,6 @@ public class FalchusLibMinecraftSpigot extends JavaPlugin {
 		itemListener = new ItemListener();
 		joinQuitListener = new JoinQuitListener();
 		lobbyCancelListener = new LobbyCancelListener();
-		vanishListener = new VanishListener();
 		clientManager = new ClientManager();
 	}
 	

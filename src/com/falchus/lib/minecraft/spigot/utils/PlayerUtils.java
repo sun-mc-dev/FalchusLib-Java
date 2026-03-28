@@ -1,8 +1,10 @@
 package com.falchus.lib.minecraft.spigot.utils;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -25,6 +27,7 @@ import lombok.experimental.UtilityClass;
 public class PlayerUtils {
 	
 	private static final FalchusLibMinecraftSpigot plugin = FalchusLibMinecraftSpigot.getInstance();
+	public static final Set<UUID> vanished = new HashSet<>();
 	public static final Map<UUID, Property> skins = new HashMap<>();
 	public static final Map<UUID, String> names = new HashMap<>();
 
@@ -122,7 +125,7 @@ public class PlayerUtils {
 	 * Vanishes a player.
 	 */
 	public static void vanish(@NonNull Player player) {
-		if (plugin.getVanishListener().players.add(player.getUniqueId())) {
+		if (vanished.add(player.getUniqueId())) {
 			for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
 				onlinePlayer.hidePlayer(player);
 			}
@@ -133,7 +136,7 @@ public class PlayerUtils {
 	 * Unvanishes a player.
 	 */
 	public static void unvanish(@NonNull Player player) {
-		if (plugin.getVanishListener().players.remove(player.getUniqueId())) {
+		if (vanished.remove(player.getUniqueId())) {
 			for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
 				onlinePlayer.showPlayer(player);
 			}
