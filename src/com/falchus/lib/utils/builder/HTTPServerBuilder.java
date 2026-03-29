@@ -20,7 +20,7 @@ public class HTTPServerBuilder {
     private final Map<@NonNull String, @NonNull BiConsumer<@NonNull HttpExchange, @NonNull Map<String, String>>> routes = new HashMap<>();
     private BiConsumer<@NonNull HttpExchange, @NonNull Map<String, String>> defaultHandler;
     
-    public HTTPServerBuilder port(@NonNull Integer port) {
+    public HTTPServerBuilder port(int port) {
     	this.port = port;
     	return this;
     }

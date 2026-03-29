@@ -21,7 +21,7 @@ public class HTTPServer {
 		server.start();
 	}
 	
-	public void stop(@NonNull Integer delay) {
+	public void stop(int delay) {
 		server.stop(delay);
 	}
 
