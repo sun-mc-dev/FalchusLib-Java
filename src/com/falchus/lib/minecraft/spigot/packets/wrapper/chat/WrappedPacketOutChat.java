@@ -9,9 +9,9 @@ public class WrappedPacketOutChat extends PacketChatWrapper {
 	public WrappedPacketOutChat(@NonNull Object handle) {
 		super(handle, Set.of(
 				version.getPackageNms() + "PacketPlayOutChat",
-				packageNetwork + "ClientboundSystemChatPacket",
-				packageNetwork + "ClientboundPlayerChatPacket",
-				packageNetwork + "ClientboundDisguisedChatPacket"
+				networkProtocolGame + "ClientboundSystemChatPacket",
+				networkProtocolGame + "ClientboundPlayerChatPacket",
+				networkProtocolGame + "ClientboundDisguisedChatPacket"
 			)
 		);
 	}

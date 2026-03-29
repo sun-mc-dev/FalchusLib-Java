@@ -6,10 +6,12 @@ import java.util.Set;
 import com.falchus.lib.minecraft.spigot.packets.wrapper.PacketWrapper;
 
 import lombok.NonNull;
+import lombok.experimental.FieldDefaults;
 
+@FieldDefaults(makeFinal = true)
 abstract class PacketChatWrapper extends PacketWrapper {
 	
-	final Field message;
+	Field message;
 
 	PacketChatWrapper(@NonNull Object handle, @NonNull Set<String> names) {
 		super(handle, names);
@@ -29,10 +31,6 @@ abstract class PacketChatWrapper extends PacketWrapper {
 	 * Out:	IChatBaseComponent
 	 */
 	public Object getMessage() {
-		try {
-			return message.get(handle);
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		return getFieldValue(message);
 	}
 }

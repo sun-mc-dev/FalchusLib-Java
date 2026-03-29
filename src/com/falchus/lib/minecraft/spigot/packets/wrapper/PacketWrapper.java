@@ -17,7 +17,9 @@ import lombok.NonNull;
 public class PacketWrapper extends FirstClassWrapper<Object> {
 	
 	protected static final IVersionAdapter version = VersionProvider.get();
-	protected static final String packageNetwork = version.getPackageNm() + "network.protocol.game.";
+	private static final String networkProtocol = version.getPackageNm() + "network.protocol.";
+	protected static final String networkProtocolCommon = networkProtocol + "common.";
+	protected static final String networkProtocolGame = networkProtocol + "game.";
 
 	private static final Map<Class<?>, Function<Object, PacketWrapper>> registry = new HashMap<>();
 	

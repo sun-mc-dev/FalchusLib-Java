@@ -80,6 +80,19 @@ public class ReflectionUtils {
         throw new RuntimeException("None of the fields exist in classes: " + classes + " - " + String.join(", ", names));
     }
     
+    @SuppressWarnings("unchecked")
+	public static <T> T getFieldValue(Object instance, @NonNull Field field) {
+    	try {
+    		return (T) field.get(instance);
+    	} catch (Exception e) {
+    		throw new RuntimeException(e);
+    	}
+    }
+    
+	public static <T> T getFieldValue(@NonNull Field field) {
+		return getFieldValue(null, field);
+	}
+    
     public static void setField(Object instance, @NonNull Field field, Object value) {
         try {
             field.set(instance, value);
