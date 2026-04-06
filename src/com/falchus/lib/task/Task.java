@@ -88,10 +88,13 @@ public abstract class Task implements Runnable {
 	
 	public static final void end(int id) {
 		Task task = tasks.remove(id);
-		if (task != null) {
-			task.end();
-			taskFutures.remove(id);
+		if (task == null) return;
+		
+		ScheduledFuture<?> future = taskFutures.remove(id);
+		if (future != null) {
+			future.cancel(false);
 		}
+		task.end();
 	}
 	
 	public final void end() {
