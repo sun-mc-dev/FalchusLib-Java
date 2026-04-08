@@ -35,8 +35,8 @@ public abstract class Task implements Runnable {
 		return runTaskTimer(runnable, 0, period, unit);
 	}
 	
-	public final void runTaskTimer(long period, TimeUnit unit) {
-		runTaskTimer(0, period, unit);
+	public final <T extends Task> T runTaskTimer(long period, TimeUnit unit) {
+		return runTaskTimer(0, period, unit);
 	}
 	
 	public static final Task runTaskTimer(Runnable runnable, long delay, long period, TimeUnit unit) {
@@ -51,14 +51,15 @@ public abstract class Task implements Runnable {
 				}
 			};
 		}
-		task.runTaskTimer(delay, period, unit);
-		return task;
+		return task.runTaskTimer(delay, period, unit);
 	}
 	
-	public final void runTaskTimer(long delay, long period, TimeUnit unit) {
+	@SuppressWarnings("unchecked")
+	public final <T extends Task> T runTaskTimer(long delay, long period, TimeUnit unit) {
 		ScheduledFuture<?> future = scheduler.scheduleAtFixedRate(this, delay, period, unit);
 		tasks.put(id, this);
 		taskFutures.put(id, future);
+		return (T) this;
 	}
 	
 	public static final Task runTaskLater(Runnable runnable, long delay, TimeUnit unit) {
@@ -73,17 +74,18 @@ public abstract class Task implements Runnable {
 				}
 			};
 		}
-		task.runTaskLater(delay, unit);
-		return task;
+		return task.runTaskLater(delay, unit);
 	}
 	
-	public final void runTaskLater(long delay, TimeUnit unit) {
+	@SuppressWarnings("unchecked")
+	public final <T extends Task> T runTaskLater(long delay, TimeUnit unit) {
 		ScheduledFuture<?> future = scheduler.schedule(() -> {
 			run();
 			end();
 		}, delay, unit);
 		tasks.put(id, this);
 		taskFutures.put(id, future);
+		return (T) this;
 	}
 	
 	public static final void end(int id) {
