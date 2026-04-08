@@ -3,10 +3,12 @@ package com.falchus.lib.task.impl;
 import com.falchus.lib.task.Task;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 /**
  * to be used with {@link Task#runTaskTimer(long)}
  */
+@Getter
 @AllArgsConstructor
 public abstract class CountdownTask extends Task {
 	

@@ -21,8 +21,8 @@ public abstract class Task implements Runnable {
 	private static final AtomicInteger ids = new AtomicInteger(0);
 	
 	@Getter private final int id = ids.incrementAndGet();
-	private boolean ended;
-	private int tick;
+	@Getter private boolean ended;
+	@Getter private int tick;
 	
 	@Override
 	public final void run() {
