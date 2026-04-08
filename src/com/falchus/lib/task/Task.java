@@ -31,15 +31,7 @@ public abstract class Task implements Runnable {
 		worker.submit(() -> onRun(tick++));
 	}
 	
-	public static final Task runTaskTimer(Runnable runnable, long period, TimeUnit unit) {
-		return runTaskTimer(runnable, 0, period, unit);
-	}
-	
-	public final <T extends Task> T runTaskTimer(long period, TimeUnit unit) {
-		return runTaskTimer(0, period, unit);
-	}
-	
-	public static final Task runTaskTimer(Runnable runnable, long delay, long period, TimeUnit unit) {
+	public static final Task runTask(Runnable runnable) {
 		Task task;
 		if (runnable instanceof Task t) {
 			task = t;
@@ -51,7 +43,19 @@ public abstract class Task implements Runnable {
 				}
 			};
 		}
-		return task.runTaskTimer(delay, period, unit);
+		return task;
+	}
+	
+	public static final Task runTaskTimer(Runnable runnable, long period, TimeUnit unit) {
+		return runTaskTimer(runnable, 0, period, unit);
+	}
+	
+	public final <T extends Task> T runTaskTimer(long period, TimeUnit unit) {
+		return runTaskTimer(0, period, unit);
+	}
+	
+	public static final Task runTaskTimer(Runnable runnable, long delay, long period, TimeUnit unit) {
+		return runTask(runnable).runTaskTimer(delay, period, unit);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -63,18 +67,7 @@ public abstract class Task implements Runnable {
 	}
 	
 	public static final Task runTaskLater(Runnable runnable, long delay, TimeUnit unit) {
-		Task task;
-		if (runnable instanceof Task t) {
-			task = t;
-		} else {
-			task = new Task() {
-				@Override
-				public void onRun(int tick) {
-					runnable.run();
-				}
-			};
-		}
-		return task.runTaskLater(delay, unit);
+		return runTask(runnable).runTaskLater(delay, unit);
 	}
 	
 	@SuppressWarnings("unchecked")

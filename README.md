@@ -27,6 +27,8 @@ A library designed to simplify & speed up software development.
 #### Tasks
 `com.falchus.lib.task.Task`
 ```java
+static Task runTask(Runnable runnable);
+
 static Task runTaskTimer(Runnable runnable, long period, TimeUnit unit);
 void runTaskTimer(long period, TimeUnit unit);
 
