@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import lombok.Getter;
 
-public abstract class Task implements Runnable {
+public class Task implements Runnable {
 	
 	private static final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors());
 	private static final ExecutorService worker = Executors.newCachedThreadPool();

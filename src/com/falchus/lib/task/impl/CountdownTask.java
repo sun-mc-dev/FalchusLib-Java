@@ -10,7 +10,7 @@ import lombok.Getter;
  */
 @Getter
 @AllArgsConstructor
-public abstract class CountdownTask extends Task {
+public class CountdownTask extends Task {
 	
 	private volatile int remaining;
 	
