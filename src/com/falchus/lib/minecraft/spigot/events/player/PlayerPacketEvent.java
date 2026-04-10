@@ -16,20 +16,20 @@ import lombok.Setter;
 @Getter
 public class PlayerPacketEvent extends Event implements Cancellable {
 
-    @Getter private static final HandlerList handlerList = new HandlerList();
-    @Setter private boolean cancelled;
-    
-    private final Player player;
-    private final PacketWrapper packet;
-
-    public PlayerPacketEvent(boolean async, Player player, PacketWrapper packet) {
-        super(async);
-        this.player = player;
-        this.packet = packet;
-    }
-
-    @Override
-    public HandlerList getHandlers() {
-        return handlerList;
-    }
+	@Getter private static final HandlerList handlerList = new HandlerList();
+	@Setter private boolean cancelled;
+	
+	private final Player player;
+	private final PacketWrapper packet;
+	
+	public PlayerPacketEvent(boolean async, Player player, PacketWrapper packet) {
+		super(async);
+		this.player = player;
+		this.packet = packet;
+	}
+	
+	@Override
+	public HandlerList getHandlers() {
+		return handlerList;
+	}
 }
