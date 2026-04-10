@@ -14,8 +14,7 @@ import org.bukkit.event.HandlerList;
 @Getter
 public class PlayerClientJoinEvent extends Event {
 
-    @Getter
-    private static final HandlerList handlerList = new HandlerList();
+    @Getter private static final HandlerList handlerList = new HandlerList();
 
     private final Player player;
     private final Client client;
