@@ -4,6 +4,7 @@ import com.falchus.lib.enums.EventPriority;
 import com.falchus.lib.events.Event;
 import com.falchus.lib.events.EventExecutor;
 import com.falchus.lib.events.EventHandler;
+
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
