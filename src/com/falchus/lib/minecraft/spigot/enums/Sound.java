@@ -21,5 +21,5 @@ public enum Sound {
 	ANVIL_LAND("BLOCK_ANVIL_LAND"),
 	BAT_TAKEOFF("ENTITY_BAT_TAKEOFF");
 	
-	public final String modernName;
+	private final String modernName;
 }
