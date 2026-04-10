@@ -13,18 +13,18 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @RequiredArgsConstructor
 public class Event {
-
-    final boolean async;
-
-    public Event() {
-        this(false);
-    }
-
-    public boolean callEvent() {
-        EventManager.callEvent(this);
-        if (this instanceof Cancellable cancellable) {
-            return !cancellable.isCancelled();
-        }
-        return true;
-    }
+	
+	final boolean async;
+	
+	public Event() {
+		this(false);
+	}
+	
+	public boolean callEvent() {
+		EventManager.callEvent(this);
+		if (this instanceof Cancellable cancellable) {
+			return !cancellable.isCancelled();
+		}
+		return true;
+	}
 }
