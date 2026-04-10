@@ -1,13 +1,14 @@
 package com.falchus.lib.minecraft.spigot.packets.wrapper.armanimation;
 
-import com.falchus.lib.minecraft.spigot.packets.wrapper.PacketWrapper;
-import lombok.NonNull;
-
 import java.util.Set;
+
+import com.falchus.lib.minecraft.spigot.packets.wrapper.PacketWrapper;
+
+import lombok.NonNull;
 
 abstract class PacketArmAnimationWrapper extends PacketWrapper {
 
-    PacketArmAnimationWrapper(@NonNull Object handle, @NonNull Set<String> names) {
-        super(handle, names);
-    }
+	PacketArmAnimationWrapper(@NonNull Object handle, @NonNull Set<String> names) {
+		super(handle, names);
+	}
 }
