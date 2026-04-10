@@ -2,8 +2,6 @@ package com.falchus.lib.minecraft.spigot.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
 
 @Getter
 @AllArgsConstructor
@@ -28,13 +26,11 @@ public enum Version {
     private final int major;
     private final int minor;
 
-    @Contract(pure = true)
-    public boolean isAfter(@NotNull Version version) {
+    public boolean isAfter(Version version) {
         return major > version.major || (major == version.major && minor > version.minor);
     }
 
-    @Contract(pure = true)
-    public boolean isBefore(@NotNull Version version) {
+    public boolean isBefore(Version version) {
         return major < version.major || (major == version.major && minor < version.minor);
     }
 }
