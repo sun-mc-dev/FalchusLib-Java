@@ -21,11 +21,12 @@ import org.bukkit.entity.Entity;
 @UtilityClass
 public class SchedulerUtils {
 
+    private final FalchusLibMinecraftSpigot plugin = FalchusLibMinecraftSpigot.getInstance();
+
     /**
      * Runs a task on the main thread (Bukkit) or the global region thread (Folia).
      */
     public static void runTask(@NonNull Runnable runnable) {
-        FalchusLibMinecraftSpigot plugin = FalchusLibMinecraftSpigot.getInstance();
         if (FalchusLibMinecraft.isFolia()) {
             Bukkit.getGlobalRegionScheduler().run(plugin, task -> runnable.run());
         } else {
@@ -37,7 +38,6 @@ public class SchedulerUtils {
      * Runs a task asynchronously on both Bukkit and Folia.
      */
     public static void runTaskAsync(@NonNull Runnable runnable) {
-        FalchusLibMinecraftSpigot plugin = FalchusLibMinecraftSpigot.getInstance();
         if (FalchusLibMinecraft.isFolia()) {
             Bukkit.getAsyncScheduler().runNow(plugin, task -> runnable.run());
         } else {
@@ -57,7 +57,6 @@ public class SchedulerUtils {
      * @param runnable the task to execute
      */
     public static void runTaskForEntity(@NonNull Entity entity, @NonNull Runnable runnable) {
-        FalchusLibMinecraftSpigot plugin = FalchusLibMinecraftSpigot.getInstance();
         if (FalchusLibMinecraft.isFolia()) {
             // Returns null if the entity is no longer valid — safe to ignore.
             entity.getScheduler().run(plugin, task -> runnable.run(), null);
@@ -73,7 +72,6 @@ public class SchedulerUtils {
      * @param delayTicks delay in server ticks (1 tick ≈ 50 ms)
      */
     public static void runTaskLater(@NonNull Runnable runnable, long delayTicks) {
-        FalchusLibMinecraftSpigot plugin = FalchusLibMinecraftSpigot.getInstance();
         if (FalchusLibMinecraft.isFolia()) {
             Bukkit.getGlobalRegionScheduler().runDelayed(plugin, task -> runnable.run(), Math.max(1, delayTicks));
         } else {
