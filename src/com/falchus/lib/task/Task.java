@@ -10,6 +10,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import lombok.Getter;
+import lombok.NonNull;
 
 public class Task implements Runnable {
 	
@@ -30,7 +31,7 @@ public class Task implements Runnable {
 		onRun(tick++);
 	}
 	
-	public static final Task run(Runnable runnable) {
+	public static final Task run(@NonNull Runnable runnable) {
 		Task task;
 		if (runnable instanceof Task t) {
 			task = t;
@@ -45,38 +46,38 @@ public class Task implements Runnable {
 		return task;
 	}
 	
-	public static final Task runAsync(Runnable runnable) {
+	public static final Task runAsync(@NonNull Runnable runnable) {
 		Task task = run(runnable);
 		worker.submit(task);
 		return task;
 	}
 	
-	public static final Task runTimer(Runnable runnable, long period, TimeUnit unit) {
+	public static final Task runTimer(@NonNull Runnable runnable, long period, @NonNull TimeUnit unit) {
 		return runTimer(runnable, 0, period, unit);
 	}
 	
-	public static final Task runTimerAsync(Runnable runnable, long period, TimeUnit unit) {
+	public static final Task runTimerAsync(@NonNull Runnable runnable, long period, @NonNull TimeUnit unit) {
 		return runTimerAsync(runnable, 0, period, unit);
 	}
 	
-	public final <T extends Task> T runTimer(long period, TimeUnit unit) {
+	public final <T extends Task> T runTimer(long period, @NonNull TimeUnit unit) {
 		return runTimer(0, period, unit);
 	}
 	
-	public final <T extends Task> T runTimerAsync(long period, TimeUnit unit) {
+	public final <T extends Task> T runTimerAsync(long period, @NonNull TimeUnit unit) {
 		return runTimerAsync(0, period, unit);
 	}
 	
-	public static final Task runTimer(Runnable runnable, long delay, long period, TimeUnit unit) {
+	public static final Task runTimer(@NonNull Runnable runnable, long delay, long period, @NonNull TimeUnit unit) {
 		return run(runnable).runTimer(delay, period, unit);
 	}
 	
-	public static final Task runTimerAsync(Runnable runnable, long delay, long period, TimeUnit unit) {
+	public static final Task runTimerAsync(@NonNull Runnable runnable, long delay, long period, @NonNull TimeUnit unit) {
 		return run(runnable).runTimerAsync(delay, period, unit);
 	}
 	
 	@SuppressWarnings("unchecked")
-	public final <T extends Task> T runTimer(long delay, long period, TimeUnit unit) {
+	public final <T extends Task> T runTimer(long delay, long period, @NonNull TimeUnit unit) {
 		ScheduledFuture<?> future = scheduler.scheduleAtFixedRate(this, delay, period, unit);
 		tasks.put(id, this);
 		taskFutures.put(id, future);
@@ -84,23 +85,23 @@ public class Task implements Runnable {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public final <T extends Task> T runTimerAsync(long delay, long period, TimeUnit unit) {
+	public final <T extends Task> T runTimerAsync(long delay, long period, @NonNull TimeUnit unit) {
 		ScheduledFuture<?> future = scheduler.scheduleAtFixedRate(() -> worker.submit(this), delay, period, unit);
 		tasks.put(id, this);
 		taskFutures.put(id, future);
 		return (T) this;
 	}
 	
-	public static final Task runLater(Runnable runnable, long delay, TimeUnit unit) {
+	public static final Task runLater(@NonNull Runnable runnable, long delay, @NonNull TimeUnit unit) {
 		return run(runnable).runLater(delay, unit);
 	}
 	
-	public static final Task runLaterAsync(Runnable runnable, long delay, TimeUnit unit) {
+	public static final Task runLaterAsync(@NonNull Runnable runnable, long delay, @NonNull TimeUnit unit) {
 		return run(runnable).runLaterAsync(delay, unit);
 	}
 	
 	@SuppressWarnings("unchecked")
-	public final <T extends Task> T runLater(long delay, TimeUnit unit) {
+	public final <T extends Task> T runLater(long delay, @NonNull TimeUnit unit) {
 		ScheduledFuture<?> future = scheduler.schedule(() -> {
 			run();
 			end();
@@ -111,7 +112,7 @@ public class Task implements Runnable {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public final <T extends Task> T runLaterAsync(long delay, TimeUnit unit) {
+	public final <T extends Task> T runLaterAsync(long delay, @NonNull TimeUnit unit) {
 		ScheduledFuture<?> future = scheduler.schedule(() -> worker.submit(() -> {
 			run();
 			end();
